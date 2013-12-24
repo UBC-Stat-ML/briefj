@@ -19,8 +19,7 @@ private static void examples() {
     for (java.lang.String line : briefj.BriefIO.readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv"))
         java.lang.System.out.println(line);
 }
-```
-<sub>Test</sub>
+```<sub>Test</sub>
 
 If you want to add typed exception back (e.g., later in development),
 just add ``.check()``:
