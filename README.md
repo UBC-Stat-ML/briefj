@@ -20,7 +20,6 @@ private static void examples() {
         java.lang.System.out.println(line);
 }
 ```
-<sub>From:[briefj.BriefIO](/about/)</sub>
 
 If you want to add typed exception back (e.g., later in development),
 just add ``.check()``:
