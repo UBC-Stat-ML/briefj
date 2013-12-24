@@ -27,9 +27,9 @@ import com.google.common.io.Files;
 
 /**
  * BriefIO
- * =======
+ * -------
  * 
- * Convenient wrappers around IO.
+ * Convenient wrappers around common IO operations.
  */
 @Tutorial(order=1)
 public class BriefIO
@@ -37,18 +37,21 @@ public class BriefIO
   
   /**
    * Examples of succinct calls, which do not 
-   * need typed exceptions
+   * need typed exceptions, and also maintain memory efficiency (i.e. they are
+   * not dumped into a large list, so file that do not fit in memory can still
+   * be iterated over):
    */
-  @SuppressWarnings("unused")
   @Tutorial(order=2,showSource=true)
   private static void examples()
   {
-    // read lines from a URL without try/catch blocks:
+    for (String line : readLines("src/test/resources/test.csv"))
+      System.out.println(line);
+    
+    for (String line : readLinesFromResource("/test.csv"))
+      System.out.println(line);
+    
     for (String line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv"))
       System.out.println(line);
-    // for doing the same with a file: readLines(...)
-    // for resources: readLinesFromResource(...)
-    
     
   }
   
@@ -56,13 +59,14 @@ public class BriefIO
    * If you want to add typed exception back (e.g., later in development),
    * just add ``.check()``:
    */
-  @SuppressWarnings("unused")
   @Tutorial(order=3,showSource=true)
-  private static void examples2() throws IOException
+  private static void examplesTyped() throws IOException
   {
     for (String line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").check())
       System.out.println(line);
   }
+  
+  
 
   public static ReadLineIterable readLines(File file)
   {
@@ -133,6 +137,48 @@ public class BriefIO
   public static ReadLineIterable readLinesFromResource(String resource, Charset charset)
   {
     return new ReadLineIterable(new ResourceCharSource(resource, charset));
+  }
+  
+  /**
+   * Returning a ``FluentIterable`` (from the guava project), it is easy to limit, filter, etc
+   * (see guava project for more):
+   * 
+   */
+  @Tutorial(order=5,showSource=true)
+  private static void examplesFluent()
+  {
+    for (String line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").skip(1).limit(10))
+      System.out.println(line);
+  }
+  
+  /**
+   * Convenient access to CSV files:
+   */
+  @Tutorial(order=6,showSource=true)
+  private static void examplesCSV()
+  {
+    for (List<String> line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").splitCSV().limit(10))
+      System.out.println(line);
+  }
+  
+  /**
+   * Which can also be indexed by the name of the columns of the first row via a map:
+   */
+  @Tutorial(order=7,showSource=true)
+  private static void examplesCSVMap()
+  {
+    for (Map<String,String> line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").indexCSV().limit(10))
+      System.out.println(line);
+  }
+  
+  /**
+   * Different CSV options can be used (see au.com.bytecode.opencsv for details):
+   */
+  @Tutorial(order=8,showSource=true)
+  private static void examplesCSVCustom()
+  {
+    for (Map<String,String> line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").indexCSV(new CSVParser(';')).limit(10))
+      System.out.println(line);
   }
   
   public static final Function<String, List<String>> splitCSV = splitCSV(new CSVParser());

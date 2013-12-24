@@ -53,7 +53,7 @@ dependencies {
   java2html 'de.java2html:java2html:5.0'
   compile group: 'com.beust', name: 'jcommander', version: '1.30'
   compile 'net.sf.opencsv:opencsv:2.3'
-  compile group: 'com.3rdf', name: 'tutorialj', version: '1.0'
+  compile group: 'com.3rdf', name: 'tutorialj', version: '1.1'
 }
 
 // http://www.gradle.org/docs/current/userguide/application_plugin.html

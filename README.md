@@ -58,3 +58,36 @@ private static void examplesFluent() {
 }
 ```
 
+Convenient access to CSV files:
+
+
+```java
+
+private static void examplesCSV() {
+    for (java.util.List<java.lang.String>  line : briefj.BriefIO.readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").splitCSV().limit(10))
+        java.lang.System.out.println(line);
+}
+```
+
+Which can also be indexed by the name of the columns of the first row via a map:
+
+
+```java
+
+private static void examplesCSVMap() {
+    for (java.util.Map<java.lang.String, java.lang.String>  line : briefj.BriefIO.readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").indexCSV().limit(10))
+        java.lang.System.out.println(line);
+}
+```
+
+Different CSV options can be used (see au.com.bytecode.opencsv for details):
+
+
+```java
+
+private static void examplesCSVCustom() {
+    for (java.util.Map<java.lang.String, java.lang.String>  line : briefj.BriefIO.readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").indexCSV(new au.com.bytecode.opencsv.CSVParser(';')).limit(10))
+        java.lang.System.out.println(line);
+}
+```
+
