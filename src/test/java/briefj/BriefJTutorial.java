@@ -30,7 +30,7 @@ import tutorialj.Tutorial;
  * ```
  * 
  */
-@Tutorial(startTutorial = "README.md", nextStep = BriefIO.class)
+@Tutorial(startTutorial = "README.md", nextStep = BriefIOTutorial.class)
 public class BriefJTutorial
 {
 
