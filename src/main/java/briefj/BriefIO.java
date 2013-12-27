@@ -25,13 +25,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 
-/**
- * BriefIO
- * -------
- * 
- * Convenient wrappers around common IO operations.
- */
-@Tutorial(order=1)
+
 public class BriefIO
 {
   

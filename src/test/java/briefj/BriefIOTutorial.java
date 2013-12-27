@@ -13,7 +13,14 @@ import tutorialj.Tutorial;
 
 import static briefj.BriefIO.*;
 
-public class BriefIOTests
+/**
+ * BriefIO
+ * -------
+ * 
+ * Convenient wrappers around common IO operations.
+ */
+@Tutorial
+public class BriefIOTutorial
 {
   /**
    * Examples of succinct calls, which do not 
@@ -21,7 +28,7 @@ public class BriefIOTests
    * not dumped into a large list, so file that do not fit in memory can still
    * be iterated over):
    */
-  @Tutorial(order=2, showSource=true)
+  @Tutorial(showSource=true)
   @Test
   public void examples()
   {
@@ -39,7 +46,7 @@ public class BriefIOTests
    * If you want to add typed exception back (e.g., later in development),
    * just add ``.check()``:
    */
-  @Tutorial(order=3,showSource=true)
+  @Tutorial(showSource=true, nextStep = DefaultCharset.class)
   @Test
   public void examplesTyped() throws IOException
   {
@@ -52,7 +59,7 @@ public class BriefIOTests
    * (see guava project for more):
    * 
    */
-  @Tutorial(order=5,showSource=true)
+  @Tutorial(showSource=true)
   @Test
   public void examplesFluent()
   {
@@ -63,7 +70,7 @@ public class BriefIOTests
   /**
    * Convenient access to CSV files:
    */
-  @Tutorial(order=6,showSource=true)
+  @Tutorial(showSource=true)
   @Test
   public void examplesCSV()
   {
@@ -74,7 +81,7 @@ public class BriefIOTests
   /**
    * Which can also be indexed by the name of the columns of the first row via a map:
    */
-  @Tutorial(order=7,showSource=true)
+  @Tutorial(showSource=true)
   @Test
   public void examplesCSVMap()
   {
@@ -85,7 +92,7 @@ public class BriefIOTests
   /**
    * Different CSV options can be used (see au.com.bytecode.opencsv for details):
    */
-  @Tutorial(order=8,showSource=true)
+  @Tutorial(showSource=true)
   @Test
   public void examplesCSVCustom()
   {

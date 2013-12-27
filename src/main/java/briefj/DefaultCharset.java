@@ -14,6 +14,6 @@ public class DefaultCharset
    * Charset in IO operations are optional.
    * To change the default charset, set the following field:
    */
-  @Tutorial(order=4,showSource=true,showLink=true)
+  @Tutorial(showSource=true,showLink=true)
   public static Charset defaultCharset = Charsets.UTF_8;
 }
