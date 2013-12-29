@@ -44,7 +44,6 @@ public class BriefJTutorial implements Runnable
    * Currently limited to a thin wrapper around JCommander, for creating command line programs:
    */
   @Tutorial(showSource = true)
-  @Test
   public static void mainExample(String [] args)
   {
     start(new BriefJTutorial(), args);

@@ -126,3 +126,16 @@ public void examplesCSVCustom() {
 }
 ```
 
+Command line utils
+------------------
+
+Currently limited to a thin wrapper around JCommander, for creating command line programs:
+
+
+```java
+
+public static void mainExample(java.lang.String[] args) {
+    briefj.CommandLineUtils.start(new briefj.BriefJTutorial() ,args);
+}
+```
+
