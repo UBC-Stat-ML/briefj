@@ -1,6 +1,10 @@
 package briefj;
 
+import org.junit.Test;
+
 import tutorialj.Tutorial;
+
+import static briefj.CommandLineUtils.*;
 
 
 /**
@@ -31,7 +35,24 @@ import tutorialj.Tutorial;
  * 
  */
 @Tutorial(startTutorial = "README.md", nextStep = BriefIOTutorial.class)
-public class BriefJTutorial
+public class BriefJTutorial implements Runnable
 {
+  /**
+   * Command line utils
+   * ------------------
+   * 
+   * Currently limited to a thin wrapper around JCommander, for creating command line programs:
+   */
+  @Tutorial(showSource = true)
+  @Test
+  public static void mainExample(String [] args)
+  {
+    start(new BriefJTutorial(), args);
+  }
 
+  @Override
+  public void run()
+  {
+    System.out.println("Execution of the program.");
+  }
 }
