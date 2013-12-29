@@ -1,7 +1,9 @@
 package briefj;
 
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -98,5 +100,18 @@ public class BriefIOTutorial
   {
     for (Map<String,String> line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").indexCSV(new CSVParser(';')).limit(10))
       System.out.println(line);
+  }
+  
+  /**
+   * Output without checked exception, optional charset:
+   */
+  @Tutorial(showSource = true)
+  @Test
+  public void examplesOutput()
+  {
+    File temp = createTempFile();
+    PrintWriter out = output(temp);
+    out.println("Hello world");
+    out.close();
   }
 }

@@ -2,9 +2,12 @@ package briefj;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -131,6 +134,43 @@ public class BriefIO
         return result;
       }
     };
+  }
+  
+  public static PrintWriter output(File f)
+  {
+    return output(f, DefaultCharset.defaultCharset);
+  }
+  
+  public static PrintWriter output(File f, Charset charset)
+  {
+    try
+    {
+      Files.createParentDirs(f);
+      return new PrintWriter(f, charset.name());
+    } catch (FileNotFoundException e)
+    {
+      throw new RuntimeException(e);
+    } catch (UnsupportedEncodingException e)
+    {
+      throw new RuntimeException(e);
+    } catch (IOException e)
+    {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  public static File createTempFile()
+  {
+    File result;
+    try
+    {
+      result = File.createTempFile("Briefj-" + System.currentTimeMillis(), ".temp");
+      result.deleteOnExit();
+      return result;
+    } catch (IOException e)
+    {
+      throw new RuntimeException(e);
+    }
   }
   
   public static class ReadLineIterable extends FluentIterable<String>

@@ -126,6 +126,20 @@ public void examplesCSVCustom() {
 }
 ```
 
+Output without checked exception, optional charset:
+
+
+```java
+
+@org.junit.Test
+public void examplesOutput() {
+    java.io.File temp = briefj.BriefIO.createTempFile();
+    java.io.PrintWriter out = briefj.BriefIO.output(temp);
+    out.println("Hello world");
+    out.close();
+}
+```
+
 Command line utils
 ------------------
 
