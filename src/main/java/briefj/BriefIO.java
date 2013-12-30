@@ -3,6 +3,7 @@ package briefj;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -10,6 +11,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -180,6 +182,48 @@ public class BriefIO
       throw new RuntimeException(e);
     }
   }
+  
+  public static FilenameFilter suffixFilter(final String ... suffixesWithoutPeriod)
+  {
+    return new FilenameFilter() 
+    {
+      public boolean accept(File dir, String file) 
+      {
+        if (suffixesWithoutPeriod == null || suffixesWithoutPeriod.equals("")) return true;
+        for (String suffixWithoutPeriod : suffixesWithoutPeriod)
+          if (file.toUpperCase().matches(".*[.]" + suffixWithoutPeriod.toUpperCase() + "$"))
+            return true;
+        return false;
+      }
+    };
+  }
+  /**
+   * list, filtering with the given suffix (case unsensitive) and sort by name
+   * @param basePath
+   * @param suffixFilter
+   * @return
+   * @throws FileNotFoundException
+   */
+  public static List<File> ls(final File basePath) 
+  {
+    return ls(basePath, "");
+  }
+  public static List<File> ls(final File basePath, final String suffixFilter) 
+  {
+    final FilenameFilter filter = (suffixFilter == null || suffixFilter.equals("") ?
+        new FilenameFilter() {
+          public boolean accept(File arg0, String arg1) { return true; }
+        } :
+        suffixFilter(suffixFilter));
+    if (!basePath.isDirectory())
+      throw new RuntimeException("Directory does not exists:" + basePath);
+    List<File> result = new ArrayList<File>();
+    for (final File item : basePath.listFiles(filter)) result.add(item);
+    Collections.sort(result);
+    return result;
+  }
+  
+
   
   public static class ReadLineIterable extends FluentIterable<String>
   {
