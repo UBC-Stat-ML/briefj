@@ -140,6 +140,10 @@ public void examplesOutput() {
 }
 ```
 
+Lists files in directory, with or without suffix filter (without period)
+
+
+
 Command line utils
 ------------------
 
