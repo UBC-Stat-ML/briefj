@@ -145,15 +145,12 @@ public class BriefIO
   {
     try
     {
-      Files.createParentDirs(f);
+      createParentDirs(f);
       return new PrintWriter(f, charset.name());
     } catch (FileNotFoundException e)
     {
       throw new RuntimeException(e);
     } catch (UnsupportedEncodingException e)
-    {
-      throw new RuntimeException(e);
-    } catch (IOException e)
     {
       throw new RuntimeException(e);
     }
@@ -167,6 +164,17 @@ public class BriefIO
       result = File.createTempFile("Briefj-" + System.currentTimeMillis(), ".temp");
       result.deleteOnExit();
       return result;
+    } catch (IOException e)
+    {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  public static void createParentDirs(File file)
+  {
+    try
+    {
+      Files.createParentDirs(file);
     } catch (IOException e)
     {
       throw new RuntimeException(e);
@@ -265,5 +273,7 @@ public class BriefIO
       throw new UnsupportedOperationException();
     }
   }
+
+
   
 }
