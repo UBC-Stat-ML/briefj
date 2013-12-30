@@ -114,4 +114,17 @@ public class BriefIOTutorial
     out.println("Hello world");
     out.close();
   }
+  
+  /**
+   * Lists files in directory, with or without suffix filter (without period)
+   */
+  @Tutorial
+  public void exampleLs()
+  {
+    for (File f : ls(new File(".")))
+      System.out.println(f);
+    for (File f : ls(new File("."), "txt"))
+      System.out.println(f);
+    
+  }
 }
