@@ -10,10 +10,5 @@ import com.google.common.base.Charsets;
 
 public class DefaultCharset
 {
-  /**
-   * Charset in IO operations are optional.
-   * To change the default charset, set the following field:
-   */
-  @Tutorial(showSource=true,showLink=true)
   public static Charset defaultCharset = Charsets.UTF_8;
 }
