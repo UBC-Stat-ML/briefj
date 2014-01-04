@@ -8,7 +8,7 @@ import java.util.Set;
 
 
 
-public class BriefCollections
+public class BriefMaps
 {
   public static <K,V> V getOrPut(Map<K,V> map, K key, V defaultValue)
   {
