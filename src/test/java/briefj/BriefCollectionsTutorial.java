@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 
 import tutorialj.Tutorial;
 
-import static briefj.BriefCollections.*;
+import static briefj.BriefMaps.*;
 
 
 

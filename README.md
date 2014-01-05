@@ -120,6 +120,23 @@ getOrPutSet(example, "foods").add("apple");
 Assert.assertEquals(example.get("colors"), new HashSet<String>(Arrays.asList("blue", "red")));
 ```
 
+
+
+
+BriefStrings
+------------
+
+To quickly select a group from a regular expression, 
+use 
+
+```java
+String match = firstGroupFromFirstMatch("I need ([0-9]*)", "I need 58 bitcoins");
+Assert.assertEquals(match, "58");
+
+List<String> matches = allGroupsFromFirstMatch("I need ([0-9]*)\\s+(.*)", "I need 58 bitcoins");
+Assert.assertEquals(matches, Arrays.asList("58", "bitcoins"));
+```
+
 Command line utils
 ------------------
 

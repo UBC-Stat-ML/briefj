@@ -50,6 +50,12 @@ public class BriefJTutorial implements Runnable
   public static void secondStep() {}
   
   /**
+   * 
+   */
+  @Tutorial(showSource = false, nextStep = BriefStringsTutorial.class)
+  public static void thirdStep() {}
+  
+  /**
    * Command line utils
    * ------------------
    * 
