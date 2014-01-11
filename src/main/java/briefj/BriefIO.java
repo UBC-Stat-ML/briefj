@@ -138,6 +138,13 @@ public class BriefIO
     };
   }
   
+  public static void write(File f, CharSequence thingsToBeWritten)
+  {
+    PrintWriter out = output(f);
+    out.append(thingsToBeWritten);
+    out.close();
+  }
+  
   public static PrintWriter output(File f)
   {
     return output(f, DefaultCharset.defaultCharset);
