@@ -29,6 +29,7 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
+import com.google.common.io.Resources;
 
 
 public class BriefIO
@@ -56,6 +57,67 @@ public class BriefIO
   {
     return new ReadLineIterable(new URLCharSource(url, charset));
   }
+  
+  public static String resourceToString(String resource, Charset charset)
+  {
+    return read(new ResourceCharSource(resource, charset));
+  }
+  
+  public static String resourceToString(String resource)
+  {
+    return resourceToString(resource, DefaultCharset.defaultCharset);
+  }
+  
+  public static String fileToString(File file, Charset charset)
+  {
+    return read(Files.asCharSource(file, charset));
+  }
+  
+  public static String fileToString(File file)
+  {
+    return fileToString(file, DefaultCharset.defaultCharset);
+  }
+  
+  public static String urlToString(String url, Charset charset)
+  {
+    return read(new URLCharSource(url, charset));
+  }
+  
+  public static String urlToString(String url)
+  {
+    return urlToString(url, DefaultCharset.defaultCharset);
+  }
+  
+  /**
+   * 
+   * @param str
+   * @return
+   * 
+   * Note: to make work in eclipse, add resources folder in Run config/classpath/user entry/advanced/folder
+   * Actually, does not seem needed as long as resource folder properly included in the build path
+   */
+  public static ReadLineIterable readLinesFromResource(String resource)
+  {
+    return readLinesFromResource(resource, DefaultCharset.defaultCharset);
+  }
+  public static ReadLineIterable readLinesFromResource(String resource, Charset charset)
+  {
+    return new ReadLineIterable(new ResourceCharSource(resource, charset));
+  }
+  
+
+  
+  public static String read(CharSource charSource)
+  {
+    try
+    {
+      return charSource.read();
+    } catch (IOException e)
+    {
+      throw new RuntimeException(e);
+    }
+  }
+  
   
   private static class ResourceCharSource extends CharSource
   {
@@ -89,22 +151,7 @@ public class BriefIO
     }
   }
   
-  /**
-   * 
-   * @param str
-   * @return
-   * 
-   * Note: to make work in eclipse, add resources folder in Run config/classpath/user entry/advanced/folder
-   */
-  public static ReadLineIterable readLinesFromResource(String resource)
-  {
-    return readLinesFromResource(resource, DefaultCharset.defaultCharset);
-  }
-  public static ReadLineIterable readLinesFromResource(String resource, Charset charset)
-  {
-    return new ReadLineIterable(new ResourceCharSource(resource, charset));
-  }
-  
+
 
   
   public static final Function<String, List<String>> splitCSV = splitCSV(new CSVParser());
