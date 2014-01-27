@@ -14,12 +14,13 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
-import tutorialj.Tutorial;
 
 import au.com.bytecode.opencsv.CSVParser;
 
@@ -29,11 +30,26 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
-import com.google.common.io.Resources;
 
 
 public class BriefIO
 {
+  private static Set<String> sentMessages = Collections.synchronizedSet(new HashSet<String>());
+  /**
+   * Print something, making sure that the same message is not displayed
+   * again in the execution of the program.
+   * 
+   * Application: A useful way for the programmer to remind him/herself of something
+   * critical is to just print it every time the program is run. However,
+   * when this message is in some inner loop, this might pollute the std out.
+   * @param string
+   */
+  public static void warnOnce(String string)
+  {
+    if (sentMessages.contains(string)) return;
+    sentMessages.add(string);
+    System.out.println(string);
+  }
   
   public static ReadLineIterable readLines(File file)
   {
