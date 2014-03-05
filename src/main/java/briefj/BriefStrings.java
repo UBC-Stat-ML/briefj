@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.RandomStringUtils;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+
 
 
 public class BriefStrings
@@ -42,5 +45,23 @@ public class BriefStrings
   public static String generateUniqueId() 
   {
       return RandomStringUtils.randomAlphanumeric(ID_LENGTH);
+  }
+  public static String indent(String str)
+  {
+    return indent(str, "  ");
+  }
+  public static String indent(String str, String indentationStr)
+  {
+    List<String> lines = Splitter.on("\n").splitToList(str);
+    return indentationStr + Joiner.on("\n" + indentationStr).join(lines);
+  }
+  
+  public static void  main(String [] args)
+  {
+    String test = "asdfas\nasdf\n";
+    System.out.println(test);
+    System.out.println("---");
+    System.out.println(indent(test));
+    System.out.println("---");
   }
 }

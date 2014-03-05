@@ -5,11 +5,17 @@ apply plugin: 'maven'
 uploadArchives {
   repositories.mavenDeployer {
     repository(url: "file:///Users/bouchard/Documents/web/public_html/maven/")
-    pom.version = "1.4.1"
+    pom.version = " 2.0.1"
     pom.artifactId = "briefj"
     pom.groupId = "com.3rdf"
   }
 }
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 
 apply plugin: 'eclipse'
 eclipse { 
@@ -27,22 +33,23 @@ repositories {
 }
 
 dependencies {
-  compile group: 'com.google.guava', name: 'guava', version: '14.0'
+  compile group: 'com.google.guava', name: 'guava', version: '16.0.1'
   testCompile group: 'junit', name: 'junit', version: '4.11'
   compile group: 'junit', name: 'junit', version: '4.11'
-  compile group: 'com.beust', name: 'jcommander', version: '1.30'
+  compile group: 'com.fig', name: 'fig', version: '1.1.1'
   compile 'net.sf.opencsv:opencsv:2.3'
   compile group: 'com.3rdf', name: 'tutorialj', version: '2.0.0'
   compile group: 'com.3rdf', name: 'binc', version: '1.1'
   compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+  compile 'org.eclipse.jgit:org.eclipse.jgit:3.1.0.201310021548-r'
 }
 
 task(tutorialj, dependsOn: ['build','testClasses'], type: JavaExec) {
   main = 'tutorialj.Main'
   classpath {
-  	configurations.compile
-  	sourceSets.main.runtimeClasspath
-  	sourceSets.test.runtimeClasspath
+    configurations.compile
+    sourceSets.main.runtimeClasspath
+    sourceSets.test.runtimeClasspath
   }
 }
 
@@ -62,5 +69,17 @@ artifacts {
     archives javadocJar
 }
 
+apply plugin: 'versions'
+
+buildscript {
+  repositories {
+    maven { url "https://github.com/ben-manes/gradle-versions-plugin/raw/mvnrepo" }
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.5-beta-1'
+  }
+}
 
 

@@ -10,6 +10,16 @@ import java.util.Set;
 
 public class BriefMaps
 {
+  /**
+   * Return the value mapped by the key if not null, otherwise, insert the 
+   * default object and return it.
+   * @param <K>
+   * @param <V>
+   * @param map
+   * @param key
+   * @param defaultValue
+   * @return
+   */
   public static <K,V> V getOrPut(Map<K,V> map, K key, V defaultValue)
   {
     V result = map.get(key);

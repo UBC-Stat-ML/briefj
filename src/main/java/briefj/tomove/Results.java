@@ -1,9 +1,10 @@
-package briefj;
+package briefj.tomove;
 
 import java.io.File;
 import java.util.Collection;
 
 import binc.Command;
+import briefj.BriefStrings;
 
 
 
@@ -36,6 +37,11 @@ public class Results
       resultFolder = initResultFolder();
     return resultFolder;
     
+  }
+  
+  public static File getFileInResultFolder(String fileName)
+  {
+    return new File(getResultFolder(), fileName);
   }
   
   private static File resultFolder = null;

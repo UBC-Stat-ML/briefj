@@ -1,14 +1,10 @@
 package briefj;
 
-import org.junit.Test;
-
 import tutorialj.Tutorial;
 
-import static briefj.CommandLineUtils.*;
 
 
-
-public class BriefJTutorial implements Runnable
+public class BriefJTutorial //implements Runnable
 {
   /**
    * Summary
@@ -55,21 +51,21 @@ public class BriefJTutorial implements Runnable
   @Tutorial(showSource = false, nextStep = BriefStringsTutorial.class)
   public static void thirdStep() {}
   
-  /**
-   * Command line utils
-   * ------------------
-   * 
-   * Currently limited to a thin wrapper around JCommander, for creating command line programs:
-   */
-  @Tutorial(showSource = true)
-  public static void mainExample(String [] args)
-  {
-    start(new BriefJTutorial(), args);
-  }
-
-  @Override
-  public void run()
-  {
-    System.out.println("Execution of the program.");
-  }
+//  /**
+//   * Command line utils
+//   * ------------------
+//   * 
+//   * Currently limited to a thin wrapper around JCommander, for creating command line programs:
+//   */
+//  @Tutorial(showSource = true)
+//  public static void mainExample(String [] args)
+//  {
+////    start(new BriefJTutorial(), args);
+//  }
+//
+//  @Override
+//  public void run()
+//  {
+//    System.out.println("Execution of the program.");
+//  }
 }
