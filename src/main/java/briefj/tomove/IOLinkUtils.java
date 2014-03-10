@@ -8,10 +8,10 @@ import java.util.Set;
 import binc.Command;
 import briefj.BriefIO;
 import briefj.BriefLog;
+import briefj.opt.OptionsParser;
 
 import com.google.common.collect.Lists;
 
-import fig.basic.OptionsParser;
 
 import static binc.Command.*;
 

@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.tools.ant.util.TeeOutputStream;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
@@ -21,9 +21,6 @@ import org.eclipse.jgit.lib.Repository;
 import briefj.tomove.Results;
 
 
-import fig.basic.Option;
-import fig.basic.OptionSet;
-import fig.basic.OptionsParser;
 
 
 

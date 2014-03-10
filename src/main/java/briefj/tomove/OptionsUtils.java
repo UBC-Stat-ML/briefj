@@ -1,8 +1,8 @@
 package briefj.tomove;
 
-import fig.basic.OptionsParser;
 
 import static briefj.tomove.ExecutionInfoFiles.*;
+import briefj.opt.OptionsParser;
 
 public class OptionsUtils
 {

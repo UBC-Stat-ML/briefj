@@ -4,7 +4,7 @@ package briefj.tomove;
 import java.io.File;
 import java.util.List;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.google.common.hash.HashCode;
 
