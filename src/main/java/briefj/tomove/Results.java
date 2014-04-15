@@ -153,4 +153,11 @@ public class Results
     File test = new File(result, "" + System.currentTimeMillis());
     test.mkdir();
   }
+
+  public static File getFolderInResultFolder(String string)
+  {
+    File result = getFileInResultFolder(string);
+    result.mkdirs();
+    return result;
+  }
 }

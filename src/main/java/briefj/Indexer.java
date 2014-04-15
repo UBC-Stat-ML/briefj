@@ -6,22 +6,46 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+/**
+ * A bijection between integers {0, 1, 2, ...} and objects of type T.
+ * 
+ * Backed by an array and a hashtable for efficient access in each direction
+ * of the bijection.
+ * 
+ * @author Alexandre Bouchard (alexandre.bouchard@gmail.com)
+ *
+ * @param <T> The type of the indexed objects
+ */
 public final class Indexer<T> implements Serializable
 {
   private static final long serialVersionUID = 1L;
   private final List<T> i2o = new ArrayList<T>();
-  private final Map<T, Integer> o2i = new HashMap<T, Integer>();
+  private final Map<T, Integer> o2i = new LinkedHashMap<T, Integer>();
   
+  /**
+   * 
+   * @return The set of indexed object (unmodifiable)
+   */
   public Set<T> objects()
   {
     return Collections.unmodifiableSet(o2i.keySet());
   }
+  public List<T> objectsList()
+  {
+    return Collections.unmodifiableList(i2o);
+  }
   public Indexer() {}
+  
+  /**
+   * Sugar into creating and calling addAllToIndex(Collection)
+   * @param coll
+   */
   public Indexer(Collection<T> coll)
   {
     addAllToIndex(coll);
@@ -30,8 +54,8 @@ public final class Indexer<T> implements Serializable
 
   /**
    * Throws IndexOutOfBounds if no such index exists
-   * @param i
-   * @return
+   * @param i An index
+   * @return The object corresponding to this index.
    */
   public T i2o(int i) 
   { 
@@ -39,8 +63,8 @@ public final class Indexer<T> implements Serializable
   }
   /**
    * Throws NoSuchElementException if no such element is indexed
-   * @param o
-   * @return
+   * @param o An object.
+   * @return The index of this object.
    */
   public int o2i(T o)
   {
@@ -50,12 +74,22 @@ public final class Indexer<T> implements Serializable
     return index;
   }
   
+  /**
+   * @see o2i, only the behavior when the object is not there is different.
+   * @param o
+   * @return The index, or -1 if not in the set of indexed objects.
+   */
   public int o2iEasy(T o)
   {
     Integer index = o2i.get(o);
     if (index == null) return -1;
     return index;
   }
+  
+  /**
+   * Add all the items one after the other in this indexer.
+   * @param os
+   */
   public void addAllToIndex(Collection<T> os)
   {
     for (T o : os) 
@@ -65,17 +99,69 @@ public final class Indexer<T> implements Serializable
         o2i.put(o, i2o.size() - 1);
       }
   }
+  
+  /**
+   * Add all the items one after the other in this indexer.
+   * @param os
+   */
   public void addToIndex(T... os)
   {
     addAllToIndex(Arrays.asList(os));
   }
-  public boolean containsIndex(int i) { return (i >= 0) && (i < i2o.size()); }
-  public boolean containsObject(T o) { return o2i.containsKey(o); }
   
-  public int size() { return i2o.size(); }
-  @Override public String toString() { return i2o.toString(); }
-  @Override public int hashCode() { return i2o.hashCode(); }
-  @Override public boolean equals(Object o)
+  /**
+   * 
+   * @param i
+   * @return Whether the provided index is in the list of indices.
+   */
+  public boolean containsIndex(int i) 
+  { 
+    return (i >= 0) && (i < i2o.size()); 
+  }
+  
+  /**
+   * 
+   * @param o
+   * @return
+   */
+  public boolean containsObject(T o) 
+  { 
+    return o2i.containsKey(o); 
+  }
+  
+  /**
+   * 
+   * @return The number of indexed objects.
+   */
+  public int size() 
+  { 
+    return i2o.size(); 
+  }
+  
+  /**
+   * 
+   */
+  @Override 
+  public String toString() 
+  { 
+    return i2o.toString(); 
+  }
+  
+  /**
+   * 
+   */
+  @Override 
+  public int hashCode() 
+  { 
+    return i2o.hashCode(); 
+  }
+  
+  /**
+   * 
+   */
+  @SuppressWarnings("rawtypes")
+  @Override 
+  public boolean equals(Object o)
   {
     if (this == o)
       return true; // for performance
