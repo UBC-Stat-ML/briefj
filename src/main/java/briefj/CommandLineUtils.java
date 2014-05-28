@@ -18,7 +18,7 @@ import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 
-import briefj.tomove.Results;
+import briefj.run.Results;
 
 
 

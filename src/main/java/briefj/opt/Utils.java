@@ -252,15 +252,15 @@ public class Utils {
   }
 
   // Return stdout as string
-//  public static String systemGetStringOutput(String cmd) throws IOException, InterruptedException {
-//    StringWriter sw = new StringWriter();
-//    if(!system(cmd, sw, LogInfo.stderr)) return null;
-//    return sw.toString();
-//  }
-//  public static String systemGetStringOutputEasy(String cmd) {
-//    try { return systemGetStringOutput(cmd); }
-//    catch(Exception e) { return null; }
-//  }
+  public static String systemGetStringOutput(String cmd) throws IOException, InterruptedException {
+    StringWriter sw = new StringWriter();
+    if(!system(cmd, sw, null)) return null;
+    return sw.toString();
+  }
+  public static String systemGetStringOutputEasy(String cmd) {
+    try { return systemGetStringOutput(cmd); }
+    catch(Exception e) { return null; }
+  }
 
   public static String makeRunCommandInDir(String cmd, String dir) {
     return String.format("cd %s && (%s)", dir, cmd);

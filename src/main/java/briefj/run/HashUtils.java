@@ -1,4 +1,4 @@
-package briefj.tomove;
+package briefj.run;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,23 +65,6 @@ public class HashUtils
       if (p.matcher(file.getName()).matches())
         return true;
     return false;
-  }
-
-  /**
-   * @param args
-   * @throws IOException 
-   */
-  public static void main(String[] args) throws IOException
-  {
-    
-    File test = new File("/Users/bouchard/temp/bayonet/");
-    
-    System.out.println(computeFileHashCodesRecursively(test));
-    
-    
-//    HashCodeBuilder builder = new HashCodeBuilder();
-//    builder.append(hc);
-//    System.out.println(builder.);
   }
 
 }

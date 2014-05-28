@@ -1,7 +1,7 @@
-package briefj.tomove;
+package briefj.run;
 
 
-import static briefj.tomove.ExecutionInfoFiles.*;
+import static briefj.run.ExecutionInfoFiles.*;
 import briefj.opt.OptionsParser;
 
 public class OptionsUtils
@@ -17,9 +17,7 @@ public class OptionsUtils
     final OptionsParser parser = new OptionsParser();
     parser.register(object);
     if (!parser.parse(args))
-    {
       throw new InvalidOptionsException();
-    }
     return parser;
   }
   

@@ -1,6 +1,7 @@
-package briefj.tomove;
+package briefj.run;
 
 import java.io.File;
+
 
 
 
@@ -20,17 +21,24 @@ public class ExecutionInfoFiles
     return result;
   }
   
-  public static final String OPTIONS_MAP = "arguments/options.map";
-  public static final String OPTIONS_DESCRIPTIONS = "arguments/options-help-and-defaults.txt";
+  public static final String OPTIONS_MAP = "options.map";
+  public static final String OPTIONS_DESCRIPTIONS = "options-help-and-defaults.txt";
   
   public static final String STD_OUT_FILE = "stdout.txt";
   public static final String STD_ERR_FILE = "stderr.txt";
+  
+  public static final String START_TIME_FILE = "start-time.txt";
+  public static final String END_TIME_FILE = "end-time.txt";
+  
+  public static final String EXCEPTION_FILE = "exception-message.txt";
   
   public static final String REPOSITORY_DIRTY_FILES = "code/dirty-files.txt";
   public static final String REPOSITORY_INFO = "code/info.map";
   public static final String REPOSITORY_CLONE_SCRIPT = "code/clone-script.sh";
   
   public static final String CLASSPATH_INFO = "code/classpath.txt";
+  
+  public static final String HOST_INFO_FILE = "host-info.map";
   
   public static final String GLOBAL_HASH = "global." + HashUtils.HASH_NAME;
   

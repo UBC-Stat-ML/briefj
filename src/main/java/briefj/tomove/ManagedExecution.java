@@ -10,13 +10,13 @@ import com.google.common.hash.HashCode;
 
 import briefj.BriefIO;
 import briefj.BriefStrings;
-import briefj.tomove.RedirectionUtils.Tees;
+import briefj.run.RedirectionUtils.Tees;
 
 //import fig.basic.InputFile;
 //import fig.basic.Option;
 //import fig.basic.OptionsParser;
 
-import static briefj.tomove.ExecutionInfoFiles.*;
+import static briefj.run.ExecutionInfoFiles.*;
 
 public class ManagedExecution
 {
