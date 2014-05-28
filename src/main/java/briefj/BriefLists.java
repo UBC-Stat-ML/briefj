@@ -26,6 +26,13 @@ public class BriefLists
     return result;
   }
   
+  public static <T> List<T> concat(List<T> list, T item)
+  {
+    List<T> result = Lists.newArrayList(list);
+    result.add(item);
+    return result;
+  }
+  
   public static <T> T last(List<T> list)
   {
     return list.get(list.size() - 1);
