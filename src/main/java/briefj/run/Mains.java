@@ -51,8 +51,12 @@ public class Mains
       }
       
     // record end time
+    long endTime = System.currentTimeMillis();
     if (!exists(END_TIME_FILE))
-      write(getFile(END_TIME_FILE), "" + System.currentTimeMillis());
+      write(getFile(END_TIME_FILE), "" + endTime);
+    
+    System.out.println("executionMilliseconds : " + (endTime - startTime));
+    System.out.println("outputFolder : " + Results.getResultFolder().getAbsolutePath());
     
     if (tees != null)
       tees.close();
