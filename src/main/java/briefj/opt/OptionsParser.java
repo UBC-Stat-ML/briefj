@@ -505,17 +505,22 @@ public class OptionsParser {
   }
   public void printHelp() { printHelp(options); }
   
-  private Map<String, String> _inputFiles = null;
-  public Map<String, String> getInputFiles() {
+  private Map<String, Pair<String,Boolean>> _inputFiles = null;
+  /**
+   * 
+   * @return Map from argument full name to a pair (value, copy?)
+   */
+  public Map<String, Pair<String,Boolean>> getInputFiles() {
     if(this.options == null) this.options = getOptInfos();
     if (_inputFiles != null) return _inputFiles;
-    _inputFiles = new HashMap<String, String>();
+    _inputFiles = new HashMap<String, Pair<String,Boolean>>();
     
     for (OptInfo info : this.options) {
       Field field = info.field;
       InputFile ann = (InputFile)field.getAnnotation(InputFile.class);
       if (ann == null) continue;
-      _inputFiles.put(info.fullName(), info.getValueString());
+      
+      _inputFiles.put(info.fullName(), Pair.of(info.getValueString(), ann.copy()));
     }
     
     return _inputFiles;
