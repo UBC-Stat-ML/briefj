@@ -1,6 +1,7 @@
 package briefj.repo;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class RepositoryUtils
    */
   public static boolean recordCodeVersion(Runnable runnable)
   {
-    File classFile = findClassFile(runnable);
+    File classFile = findSourceFile(runnable);
     if (classFile == null) 
     {
       System.err.println("WARNING: Could not find class file (lanching from jar?)");
@@ -54,7 +55,7 @@ public class RepositoryUtils
     BriefIO.write(scriptFile, repository.cloneScript());
     try 
     {
-      Command.call(Commands.chmod.withArgs("755 " + scriptFile.getAbsolutePath()));
+      Command.call(Commands.chmod.withArgs("755").appendArg(scriptFile.getAbsolutePath()));
     } 
     catch (Exception e) {}
     
@@ -90,25 +91,26 @@ public class RepositoryUtils
     return loader;
   }
   
-  public static File findClassFile(Object o) 
+  public static File findSourceFile(Object o) 
   {
-    Class<?> c = o.getClass();
-    ClassLoader loader = getClassLoader(o);
-    if (loader != null) 
-    {
-      String name = c.getCanonicalName();
-      URL resource = loader.getResource(name.replace(".", "/") + ".class");
-      while (resource == null && name.contains("."))
-      {
-        name = name.replaceAll("[.][^.]*$", "");
-        resource = loader.getResource(name.replace(".", "/") + ".class");
-      }
-      if ( resource != null ) {
-        File result = new File(resource.toString().replace("file:", ""));
-        if (result.exists())
-          return result;
-      }
-    }
-    return null;
+    try { return new File(o.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath()); } 
+    catch (Exception e) { throw new RuntimeException(e); }
+//    Class<?> c = o.getClass();
+//    ClassLoader loader = getClassLoader(o);
+//    if (loader != null) 
+//    {
+//      String name = c.getCanonicalName();
+//      URL resource = loader.getResource(name.replace(".", "/") + ".class");
+//      while (resource == null && name.contains("."))
+//      {
+//        name = name.replaceAll("[.][^.]*$", "");
+//        resource = loader.getResource(name.replace(".", "/") + ".class");
+//      }
+//      if ( resource != null ) {
+//        File result = new File(resource.toString().replace("file:", ""));
+//        if (result.exists())
+//          return result;
+//      }
+//    }
   }
 }

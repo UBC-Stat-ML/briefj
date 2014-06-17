@@ -16,7 +16,7 @@ public class RemoteUtils
   public static String remoteBash(String host, String script)
   {
     return ssh
-      .withArgs(host + " /bin/bash -s")
+      .withArg(host).appendArgs("/bin/bash -s")
       .throwOnNonZeroReturnCode()
       .callWithInputStreamContents(script);
   }

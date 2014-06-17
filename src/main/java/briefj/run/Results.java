@@ -3,7 +3,10 @@ package briefj.run;
 import java.io.File;
 import java.util.Collection;
 
+import org.apache.commons.lang3.StringUtils;
+
 import binc.Command;
+import briefj.BriefFiles;
 import briefj.BriefStrings;
 
 
@@ -16,11 +19,13 @@ import briefj.BriefStrings;
  */
 public class Results
 {
+  private static final Object SPECIFIED_RESULT_FOLDER = "SPECIFIED_RESULT_FOLDER";
+
   /**
    * Main point of entry: this will return a directory unique
    * to this execution.
    * 
-   * Located in experiments/all/[name of main class]-[unique-id].exec/
+   * Located in experiments/all/[date]-[unique-id].exec/
    * 
    * A shortcut for the latest execution is also updated in experiments/latest/
    * 
@@ -67,13 +72,33 @@ public class Results
     if (latestFolderSoftLink.exists())
       latestFolderSoftLink.delete();
     
-    try { Command.call(Command.cmd("ln").withArgs("-s " + result.getAbsolutePath() + " " + latestFolderSoftLink)); }
+    try { Command.call(Command.cmd("ln").withArgs("-s").appendArg(result.getAbsolutePath()).appendArg(latestFolderSoftLink.toString())); }
     catch (Exception e) {}
+  }
+  
+  public static String nextRandomResultFolderName()
+  {
+    return BriefStrings.currentDataString() + "-" + BriefStrings.generateUniqueId() + ".exec";
+//    String result = System.getenv().get(SPECIFIED_RESULT_FOLDER);
+//    if (StringUtils.isEmpty(result))
+//      result = BriefStrings.generateUniqueId() + ".exec";
+//    return result;
   }
 
   private static File createResultFolder(File poolFolder)
   {
-    String name = getMainClassString() + "-" + BriefStrings.generateUniqueId() + ".exec";
+    // if something was specified by an env variable, use that
+    String fromEnvironment = System.getenv().get(SPECIFIED_RESULT_FOLDER);
+    if (!StringUtils.isEmpty(fromEnvironment))
+    {
+      File result = new File(fromEnvironment);
+      BriefFiles.createParentDirs(result);
+      result.mkdir();
+      return result;
+    }
+    
+    // otherwise, create a new one
+    String name = nextRandomResultFolderName(); //getMainClassString() + "-" + BriefStrings.generateUniqueId() + ".exec";
     File allResults = new File(poolFolder, "all");
     allResults.mkdir();
     File result = new File(allResults, name);
@@ -83,7 +108,7 @@ public class Results
     return result;
   }
 
-  private static File getPoolFolder()
+  public static File getPoolFolder()
   {
     File resultsFolder = new File("results");
     
@@ -142,16 +167,6 @@ public class Results
       }
     }
     throw new RuntimeException();
-  }
-  
-  
-  
-  public static void main(String [] args)
-  {
-    File result = getResultFolder();
-    System.out.println(result);
-    File test = new File(result, "" + System.currentTimeMillis());
-    test.mkdir();
   }
 
   public static File getFolderInResultFolder(String string)
