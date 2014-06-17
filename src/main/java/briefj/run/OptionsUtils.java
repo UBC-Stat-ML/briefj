@@ -12,10 +12,11 @@ public class OptionsUtils
     parser.getOptionStrings().printEasy(getFile(OPTIONS_DESCRIPTIONS)); 
   }
 
-  public static OptionsParser parseOptions(Object object, String[] args)
+  public static OptionsParser parseOptions(String[] args, Object ... objects)
   {
     final OptionsParser parser = new OptionsParser();
-    parser.register(object);
+    for (Object object : objects)
+      parser.register(object);
     if (!parser.parse(args))
       throw new InvalidOptionsException();
     return parser;
@@ -23,6 +24,11 @@ public class OptionsUtils
   
   public static class InvalidOptionsException extends RuntimeException
   {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     
   }
 }

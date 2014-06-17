@@ -1,21 +1,35 @@
 package briefj.run;
 
-import static briefj.BriefIO.*;
+import static briefj.BriefIO.write;
+import static briefj.run.ExecutionInfoFiles.CLASSPATH_INFO;
+import static briefj.run.ExecutionInfoFiles.DIRTY_FILE_RANDOM_HASH;
+import static briefj.run.ExecutionInfoFiles.END_TIME_FILE;
+import static briefj.run.ExecutionInfoFiles.EXCEPTION_FILE;
+import static briefj.run.ExecutionInfoFiles.GLOBAL_HASH;
+import static briefj.run.ExecutionInfoFiles.HOST_INFO_FILE;
+import static briefj.run.ExecutionInfoFiles.INPUT_LINKS_FOLDER;
+import static briefj.run.ExecutionInfoFiles.OPTIONS_MAP;
+import static briefj.run.ExecutionInfoFiles.REPOSITORY_INFO;
+import static briefj.run.ExecutionInfoFiles.START_TIME_FILE;
+import static briefj.run.ExecutionInfoFiles.STD_OUT_FILE;
+import static briefj.run.ExecutionInfoFiles.exists;
+import static briefj.run.ExecutionInfoFiles.getExecutionInfoFolder;
+import static briefj.run.ExecutionInfoFiles.getFile;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-
-import com.google.common.hash.HashCode;
 
 import briefj.BriefStrings;
 import briefj.opt.OptionsParser;
 import briefj.repo.RepositoryUtils;
 import briefj.run.RedirectionUtils.Tees;
 
-import static briefj.run.ExecutionInfoFiles.*;
+import com.google.common.hash.HashCode;
 
 
 public class Mains
 {
+
+  
   /**
    * Instrument various aspect of this run.
    * 
@@ -93,7 +107,7 @@ public class Mains
     OptionsParser parser;
     try 
     {
-      parser = OptionsUtils.parseOptions(mainClass, args);
+      parser = OptionsUtils.parseOptions(args, mainClass);
       if (!exists(OPTIONS_MAP))
         OptionsUtils.recordOptions(parser);
     }
