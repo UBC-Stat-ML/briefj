@@ -107,7 +107,7 @@ public class BriefIOTutorial
   @Test
   public void examplesOutput()
   {
-    File temp = createTempFile();
+    File temp = BriefFiles.createTempFile();
     PrintWriter out = output(temp);
     out.println("Hello world");
     out.close();
@@ -119,9 +119,9 @@ public class BriefIOTutorial
   @Tutorial
   public void exampleLs()
   {
-    for (File f : ls(new File(".")))
+    for (File f : BriefFiles.ls(new File(".")))
       System.out.println(f);
-    for (File f : ls(new File("."), "txt"))
+    for (File f : BriefFiles.ls(new File("."), "txt"))
       System.out.println(f);
     
   }

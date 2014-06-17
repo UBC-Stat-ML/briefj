@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 
+import briefj.BriefFiles;
 import briefj.BriefIO;
 import briefj.BriefLists;
 
@@ -32,7 +33,7 @@ public class HashUtils
   public static HashCode computeFileHashCodesRecursively(File directory, Set<Pattern> fileNameExclusionPatterns)
   {
     Hasher hasher = HASH_FUNCTION.newHasher();
-    loop:for (File file : BriefLists.sort(BriefIO.ls(directory)))
+    loop:for (File file : BriefLists.sort(BriefFiles.ls(directory)))
     {
       if (match(file, fileNameExclusionPatterns))
         continue loop;
