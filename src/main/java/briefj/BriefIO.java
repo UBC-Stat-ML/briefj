@@ -3,7 +3,6 @@ package briefj;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -11,17 +10,13 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
-
 
 import au.com.bytecode.opencsv.CSVParser;
 
@@ -31,6 +26,9 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 
 
 public class BriefIO
@@ -106,8 +104,6 @@ public class BriefIO
     return new ReadLineIterable(new ResourceCharSource(resource, charset));
   }
   
-
-  
   public static String read(CharSource charSource)
   {
     try
@@ -118,7 +114,6 @@ public class BriefIO
       throw new RuntimeException(e);
     }
   }
-  
   
   private static class ResourceCharSource extends CharSource
   {
@@ -193,6 +188,11 @@ public class BriefIO
     out.close();
   }
   
+  public static Gson createGson()
+  {
+    return new GsonBuilder().setPrettyPrinting().create();
+  }
+  
   public static PrintWriter output(File f)
   {
     return output(f, DefaultCharset.defaultCharset);
@@ -202,7 +202,7 @@ public class BriefIO
   {
     try
     {
-      createParentDirs(f);
+      BriefFiles.createParentDirs(f);
       return new PrintWriter(f, charset.name());
     } catch (FileNotFoundException e)
     {
@@ -212,73 +212,6 @@ public class BriefIO
       throw new RuntimeException(e);
     }
   }
-  
-  public static File createTempFile()
-  {
-    File result;
-    try
-    {
-      result = File.createTempFile("Briefj-" + System.currentTimeMillis(), ".temp");
-      result.deleteOnExit();
-      return result;
-    } catch (IOException e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
-  
-  public static void createParentDirs(File file)
-  {
-    try
-    {
-      Files.createParentDirs(file);
-    } catch (IOException e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
-  
-  public static FilenameFilter suffixFilter(final String ... suffixesWithoutPeriod)
-  {
-    return new FilenameFilter() 
-    {
-      public boolean accept(File dir, String file) 
-      {
-        if (suffixesWithoutPeriod == null || suffixesWithoutPeriod.equals("")) return true;
-        for (String suffixWithoutPeriod : suffixesWithoutPeriod)
-          if (file.toUpperCase().matches(".*[.]" + suffixWithoutPeriod.toUpperCase() + "$"))
-            return true;
-        return false;
-      }
-    };
-  }
-  /**
-   * list, filtering with the given suffix (case unsensitive) and sort by name
-   * @param basePath
-   * @param suffixFilter
-   * @return
-   * @throws FileNotFoundException
-   */
-  public static List<File> ls(final File basePath) 
-  {
-    return ls(basePath, "");
-  }
-  public static List<File> ls(final File basePath, final String suffixFilter) 
-  {
-    final FilenameFilter filter = (suffixFilter == null || suffixFilter.equals("") ?
-        new FilenameFilter() {
-          public boolean accept(File arg0, String arg1) { return true; }
-        } :
-        suffixFilter(suffixFilter));
-    if (!basePath.isDirectory())
-      throw new RuntimeException("Directory does not exists:" + basePath);
-    List<File> result = new ArrayList<File>();
-    for (final File item : basePath.listFiles(filter)) result.add(item);
-    Collections.sort(result);
-    return result;
-  }
-  
-
   
   public static class ReadLineIterable extends FluentIterable<String>
   {
@@ -381,4 +314,21 @@ public class BriefIO
     localeSet = true;
   }
   
+  public static String prompt(String prompt) 
+  {
+    BufferedReader in = DefaultCharset.getReader(System.in); 
+    String str = "";
+    if (prompt != null)
+      System.out.print(prompt + "> ");
+    try { str = in.readLine(); } 
+    catch (IOException e) { throw new RuntimeException(e); }
+    if (str == null) return "";
+    return str;
+  }
+  
+  public static String prompt() 
+  {
+    return prompt(null);
+  }
+
 }
