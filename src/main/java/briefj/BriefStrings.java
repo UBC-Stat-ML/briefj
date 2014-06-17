@@ -1,6 +1,10 @@
 package briefj;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,12 +75,10 @@ public class BriefStrings
     return indentationStr + Joiner.on("\n" + indentationStr).join(lines);
   }
   
-  public static void  main(String [] args)
+  public static String currentDataString()
   {
-    String test = "asdfas\nasdf\n";
-    System.out.println(test);
-    System.out.println("---");
-    System.out.println(indent(test));
-    System.out.println("---");
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+    Date today = Calendar.getInstance().getTime();        
+    return df.format(today);
   }
 }
