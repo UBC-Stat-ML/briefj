@@ -12,6 +12,7 @@ import static briefj.run.ExecutionInfoFiles.OPTIONS_MAP;
 import static briefj.run.ExecutionInfoFiles.REPOSITORY_INFO;
 import static briefj.run.ExecutionInfoFiles.START_TIME_FILE;
 import static briefj.run.ExecutionInfoFiles.STD_OUT_FILE;
+import static briefj.run.ExecutionInfoFiles.OUT_MAP;
 import static briefj.run.ExecutionInfoFiles.exists;
 import static briefj.run.ExecutionInfoFiles.getExecutionInfoFolder;
 import static briefj.run.ExecutionInfoFiles.getFile;
@@ -20,6 +21,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import briefj.BriefStrings;
 import briefj.opt.OptionsParser;
+import briefj.opt.OrderedMap;
+import briefj.opt.OrderedStringMap;
 import briefj.repo.RepositoryUtils;
 import briefj.run.RedirectionUtils.Tees;
 
@@ -71,9 +74,12 @@ public class Mains
     
     System.out.println("executionMilliseconds : " + (endTime - startTime));
     System.out.println("outputFolder : " + Results.getResultFolder().getAbsolutePath());
+      
     
     if (tees != null)
       tees.close();
+    
+    outputMap.printEasy(getFile(OUT_MAP));
   }
 
   private static void recordTransientInfo(String[] args, Runnable mainClass, long startTime)
@@ -142,4 +148,17 @@ public class Mains
     write(getFile(GLOBAL_HASH), global.toString());
     return true;
   }
+  
+  /**
+   * Modified from Percy Liang's fig
+   * https://github.com/percyliang/fig
+   */
+  public static void putLogRec(String key, Object value)
+  {
+    outputMap.put(key, value.toString());
+  }
+  
+  private static OrderedMap<String, String> outputMap = new OrderedStringMap();
+  
+  
 }

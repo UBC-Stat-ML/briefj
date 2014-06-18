@@ -24,6 +24,8 @@ public class ExecutionInfoFiles
   public static final String OPTIONS_MAP = "options.map";
   public static final String OPTIONS_DESCRIPTIONS = "options-help-and-defaults.txt";
   
+  public static final String OUT_MAP = "output.map";
+  
   public static final String STD_OUT_FILE = "stdout.txt";
   public static final String STD_ERR_FILE = "stderr.txt";
   
