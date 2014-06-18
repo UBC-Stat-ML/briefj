@@ -4,8 +4,8 @@ apply plugin: 'maven'
 
 uploadArchives {
   repositories.mavenDeployer {
-    repository(url: "file:///Users/bouchard/Documents/web/public_html/maven/")
-    pom.version = "  2.3.0"
+    repository(url: "file:///Users/jewellsean/Documents/Web/maven/")
+    pom.version = "  2.3.0a"
     pom.artifactId = "briefj"
     pom.groupId = "ca.ubc.stat"
   }
