@@ -42,6 +42,7 @@ dependencies {
   compile 'org.eclipse.jgit:org.eclipse.jgit:3.2.0.201312181205-r'
   compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.3'
   compile 'com.google.code.gson:gson:2.2.4'
+  compile 'org.xerial:sqlite-jdbc:3.7.2'
 }
 
 task(tutorialj, dependsOn: ['build','testClasses'], type: JavaExec) {
