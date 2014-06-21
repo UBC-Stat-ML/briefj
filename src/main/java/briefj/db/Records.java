@@ -6,12 +6,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import briefj.opt.OrderedStringMap;
+import briefj.run.Results;
 
 public class Records
 {
   
   private Connection conn;
-  final private String CONN_PATH = "Users/jewellsean";
+  final private String CONN_PATH = Results.getPoolFolder().getAbsolutePath();
   final private String DB_NAME = "index.db";
   final private String DB_TABLE = "run";
   final private OrderedStringMap options;
