@@ -80,7 +80,7 @@ public class Records
     " (id INTEGER PRIMARY KEY AUTOINCREMENT ";
     mapKey2String(options, colNames);
     mapKey2String(output, colNames);
-    colNames.append(", folderLocation string, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP");
+    colNames.append(", folderLocation string, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
     try
     {
       Statement statement = conn.createStatement();
