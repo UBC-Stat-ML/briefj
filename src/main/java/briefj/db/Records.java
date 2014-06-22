@@ -12,7 +12,7 @@ public class Records
 {
   
   private Connection conn;
-  final private String CONN_PATH = Results.getPoolFolder().getAbsolutePath();
+  final private String CONN_PATH;
   final private String DB_NAME = "index.db";
   final private String DB_TABLE = "run";
   final private OrderedStringMap options;
@@ -24,6 +24,7 @@ public class Records
     this.options = options;
     this.output = output;
     this.folderLocation = folderLocation;
+    this.CONN_PATH = System.getenv().get("CONN_PATH");
   }
   
   public void recordFullRun() 
@@ -79,7 +80,7 @@ public class Records
     " (id INTEGER PRIMARY KEY AUTOINCREMENT ";
     mapKey2String(options, colNames);
     mapKey2String(output, colNames);
-    colNames.append(", folderLocation string, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+    colNames.append(", folderLocation string, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP");
     try
     {
       Statement statement = conn.createStatement();
@@ -124,6 +125,7 @@ public class Records
     Class.forName("org.sqlite.JDBC");
     try
     {
+      System.out.println(CONN_PATH + "/" + DB_NAME);
       conn = DriverManager.getConnection("jdbc:sqlite:/" + CONN_PATH + "/" + DB_NAME);
     } catch (SQLException e)
     {
