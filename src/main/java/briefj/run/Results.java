@@ -79,10 +79,6 @@ public class Results
   public static String nextRandomResultFolderName()
   {
     return BriefStrings.currentDataString() + "-" + BriefStrings.generateUniqueId() + ".exec";
-//    String result = System.getenv().get(SPECIFIED_RESULT_FOLDER);
-//    if (StringUtils.isEmpty(result))
-//      result = BriefStrings.generateUniqueId() + ".exec";
-//    return result;
   }
 
   private static File createResultFolder(File poolFolder)

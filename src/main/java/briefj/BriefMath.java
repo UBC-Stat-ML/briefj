@@ -7,6 +7,7 @@ public class BriefMath
   public static double THRESHOLD = 1e-5;
   
   /**
+   * See also NumericalUtils
    * 
    * @param n1
    * @param n2
