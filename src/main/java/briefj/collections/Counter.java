@@ -232,7 +232,7 @@ public class Counter<E> implements Serializable, Iterable<E> {
 	}
 
 	public Counter() {
-		this(new MapFactory.HashMapFactory<E, Double>());
+		this(new MapFactory.LinkedHashMapFactory<E, Double>());
 	}
 
 	public Counter(MapFactory<E, Double> mf) {

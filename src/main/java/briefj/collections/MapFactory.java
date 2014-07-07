@@ -1,12 +1,16 @@
 package briefj.collections;
 
-import java.util.*;
 import java.io.Serializable;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.WeakHashMap;
 
 /**
  * The MapFactory is a mechanism for specifying what kind of map is to be used
  * by some object.  For example, if you want a Counter which is backed by an
- * IdentityHashMap instead of the defaul HashMap, you can pass in an
+ * IdentityHashMap instead of the default HashMap, you can pass in an
  * IdentityHashMapFactory.
  *
  * @author Dan Klein
@@ -14,10 +18,10 @@ import java.io.Serializable;
 
 public abstract class MapFactory<K,V> implements Serializable {
   private static final long serialVersionUID = 5724671156522771657L;
-  public static class HashMapFactory<K,V> extends MapFactory<K,V> {
+  public static class LinkedHashMapFactory<K,V> extends MapFactory<K,V> {
     private static final long serialVersionUID = 5071310986893643248L;
     public Map<K,V> buildMap() {
-      return new HashMap<K,V>();
+      return new LinkedHashMap<K,V>();
     }
   }
 
