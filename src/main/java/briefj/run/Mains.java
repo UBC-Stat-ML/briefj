@@ -81,8 +81,11 @@ public class Mains
     
     outputMap.printEasy(getFile(OUT_MAP));
     
-    Records rec = new Records(optsRead.options, outputMap, Results.getResultFolder().toString());
-    rec.recordFullRun();
+    if(System.getenv().get("CONN_PATH") != null)
+    {
+      Records rec = new Records(optsRead.options, outputMap, Results.getResultFolder().toString());
+      rec.recordFullRun();  
+    }
   }
 
   private static void recordTransientInfo(String[] args, Runnable mainClass, long startTime)
