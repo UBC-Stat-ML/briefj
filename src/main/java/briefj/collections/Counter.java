@@ -168,7 +168,7 @@ public class Counter<E> implements Serializable, Iterable<E> {
 	 * Finds the key with maximum count. This is a linear operation, and ties
 	 * are broken arbitrarily.
 	 * 
-	 * @return a key with minumum count
+	 * @return a key with maximum count
 	 */
 	public E argMax() {
 		double maxCount = Double.NEGATIVE_INFINITY;
@@ -193,6 +193,36 @@ public class Counter<E> implements Serializable, Iterable<E> {
 		}
 		return maxCount;
 	}
+	
+	 /**
+   * Finds the key with min count. This is a linear operation, and ties
+   * are broken arbitrarily.
+   * 
+   * @return a key with min count
+   */
+  public E argMin() {
+    double minCount = Double.POSITIVE_INFINITY;
+    E minKey = null;
+    for (Map.Entry<E, Double> entry : entries.entrySet()) {
+      if (entry.getValue() < minCount || minKey == null) {
+        minKey = entry.getKey();
+        minCount = entry.getValue();
+      }
+    }
+    return minKey;
+  }
+
+  public double min() {
+    double minCount = Double.POSITIVE_INFINITY;
+    E minKey = null;
+    for (Map.Entry<E, Double> entry : entries.entrySet()) {
+      if (entry.getValue() < minCount || minKey == null) {
+        minKey = entry.getKey();
+        minCount = entry.getValue();
+      }
+    }
+    return minCount;
+  }
 
 	/**
 	 * Returns a string representation with the keys ordered by decreasing

@@ -43,17 +43,17 @@ public class Tree<L> implements Serializable {
    */
   public List<L> getDescendents() {
     List<L> yield = new ArrayList<L>();
-    appendYield(this, yield);
+    appendDescendents(this, yield);
     return yield;
   }
 
-  private static <L> void appendYield(Tree<L> tree, List<L> yield) {
+  private static <L> void appendDescendents(Tree<L> tree, List<L> yield) {
     if (tree.isLeaf()) {
       yield.add(tree.getLabel());
       return;
     }
     for (Tree<L> child : tree.getChildren()) {
-      appendYield(child, yield);
+      appendDescendents(child, yield);
     }
   }
 
