@@ -41,7 +41,7 @@ public class Tree<L> implements Serializable {
    * Recursively visit the nodes under to collect all the leaves under this node
    * @return 
    */
-  public List<L> getYield() {
+  public List<L> getDescendents() {
     List<L> yield = new ArrayList<L>();
     appendYield(this, yield);
     return yield;

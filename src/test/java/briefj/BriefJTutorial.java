@@ -75,5 +75,11 @@ public class BriefJTutorial //implements Runnable
   @Tutorial(showSource = false, nextStep = BriefStringsTutorial.class)
   public static void strings() {}
   
+  
+  /**
+   * 
+   */
+  @Tutorial(showSource = false, nextStep = ResultsTutorial.class)
+  public static void results() {}
 
 }
