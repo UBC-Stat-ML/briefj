@@ -29,5 +29,10 @@ public class BriefStringsTutorial
     
     List<String> matches = allGroupsFromFirstMatch("I need ([0-9]*)\\s+(.*)", "I need 58 bitcoins");
     Assert.assertEquals(matches, Arrays.asList("58", "bitcoins"));
+    
+    List<String> matchesFromAllMatches = firstGroupFromAllMatches("I need ([0-9]*)\\s+bitcoins\\s*", "I need 58 bitcoins I need 9 bitcoins");
+    Assert.assertEquals(matchesFromAllMatches, Arrays.asList("58", "9"));
   }
+  
+  
 }

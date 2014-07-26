@@ -199,6 +199,24 @@ UnorderedPair<Integer, Integer>
 Assert.assertEquals(example, example2);
 ```
 
+Indexer are convenient when you want to have an array indexed by 
+some arbitrary type of objects. E.g. for efficient array-based
+categorical sampling. 
+
+An indexer is just a bijection between integers 0, 1, .., N and
+a set of objects with .equals() and .hashCode() implemented.
+
+```java
+Indexer<String> indexer = new Indexer<String>();
+indexer.addToIndex("first");
+indexer.addToIndex("second");
+indexer.addToIndex("third");
+
+// i2o maps from index to object
+// o2i maps from object to index
+Assert.assertEquals("first", indexer.i2o(indexer.o2i("first")));
+```
+
 
 
 
@@ -214,5 +232,8 @@ Assert.assertEquals(match, "58");
 
 List<String> matches = allGroupsFromFirstMatch("I need ([0-9]*)\\s+(.*)", "I need 58 bitcoins");
 Assert.assertEquals(matches, Arrays.asList("58", "bitcoins"));
+
+List<String> matchesFromAllMatches = firstGroupFromAllMatches("I need ([0-9]*)\\s+bitcoins\\s*", "I need 58 bitcoins I need 9 bitcoins");
+Assert.assertEquals(matchesFromAllMatches, Arrays.asList("58", "9"));
 ```
 

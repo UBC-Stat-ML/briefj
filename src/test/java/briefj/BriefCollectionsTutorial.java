@@ -109,5 +109,25 @@ public class BriefCollectionsTutorial
     Assert.assertEquals(example, example2);
   }
   
-  
+  /**
+   * Indexer are convenient when you want to have an array indexed by 
+   * some arbitrary type of objects. E.g. for efficient array-based
+   * categorical sampling. 
+   * 
+   * An indexer is just a bijection between integers 0, 1, .., N and
+   * a set of objects with .equals() and .hashCode() implemented.
+   */
+  @Tutorial
+  @Test
+  public void indexer()
+  {
+    Indexer<String> indexer = new Indexer<String>();
+    indexer.addToIndex("first");
+    indexer.addToIndex("second");
+    indexer.addToIndex("third");
+    
+    // i2o maps from index to object
+    // o2i maps from object to index
+    Assert.assertEquals("first", indexer.i2o(indexer.o2i("first")));
+  }
 }

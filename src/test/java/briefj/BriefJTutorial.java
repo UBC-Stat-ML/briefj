@@ -58,7 +58,7 @@ public class BriefJTutorial //implements Runnable
    *   - Deselect ``Copy projects into workspace`` to avoid having duplicates
    */
   @Tutorial(startTutorial = "README.md", nextStep = BriefIOTutorial.class, showSource = false)
-  public static void firstStep()
+  public static void io()
   {
     
   }
@@ -67,13 +67,13 @@ public class BriefJTutorial //implements Runnable
    * 
    */
   @Tutorial(showSource = false, nextStep = BriefCollectionsTutorial.class)
-  public static void secondStep() {}
+  public static void collections() {}
   
   /**
    * 
    */
   @Tutorial(showSource = false, nextStep = BriefStringsTutorial.class)
-  public static void thirdStep() {}
+  public static void strings() {}
   
 
 }
