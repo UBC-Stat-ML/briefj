@@ -41,19 +41,19 @@ public class Tree<L> implements Serializable {
    * Recursively visit the nodes under to collect all the leaves under this node
    * @return 
    */
-  public List<L> getDescendents() {
+  public List<L> getLeaves() {
     List<L> yield = new ArrayList<L>();
-    appendDescendents(this, yield);
+    appendLeaves(this, yield);
     return yield;
   }
 
-  private static <L> void appendDescendents(Tree<L> tree, List<L> yield) {
+  private static <L> void appendLeaves(Tree<L> tree, List<L> yield) {
     if (tree.isLeaf()) {
       yield.add(tree.getLabel());
       return;
     }
     for (Tree<L> child : tree.getChildren()) {
-      appendDescendents(child, yield);
+      appendLeaves(child, yield);
     }
   }
 
