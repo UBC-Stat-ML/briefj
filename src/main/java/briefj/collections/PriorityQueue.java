@@ -209,7 +209,7 @@ public class PriorityQueue <E> implements Iterator<E>, Serializable,
    *
    * @return
    */
-  public Counter asCounter() {
+  public Counter<?> asCounter() {
     PriorityQueue<E> pq = clone();
     Counter<E> counter = new Counter<E>();
     while (pq.hasNext()) {

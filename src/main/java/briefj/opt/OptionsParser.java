@@ -53,7 +53,7 @@ class OptInfo {
   public String getEnumStr() {
     return getEnumStr(field != null ? field.getType() : getMethod.getReturnType());
   }
-  public static String getEnumStr(Class c) {
+  public static String getEnumStr(@SuppressWarnings("rawtypes") Class c) {
     return StrUtils.join(c.getEnumConstants(), "|");
   }
 
@@ -70,6 +70,7 @@ class OptInfo {
   }
 
   // Important to format properly in a way that we can read it and parse it again.
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public String getValueString() {
     if(stringRepn != null) return stringRepn;
     Object o = getValue();
@@ -110,14 +111,18 @@ class OptInfo {
 
   private String typeStr() { return typeStr(getGenericType()); }
 
+  @SuppressWarnings("rawtypes")
   private static boolean isEnum(Type type) {
     return type instanceof Class && ((Class)type).isEnum();
   }
 
   // Array detectors
   static boolean objIsArray(Object o) { return typeIsArray(o.getClass()); }
+  @SuppressWarnings("rawtypes")
   static boolean typeIsArray(Type t) { return t instanceof Class && ((Class)t).getComponentType() != null; }
+  @SuppressWarnings("rawtypes")
   static Class arrayTypeOfObj(Object o) { return arrayTypeOfType(o.getClass()); }
+  @SuppressWarnings("rawtypes")
   static Class arrayTypeOfType(Type t) { return (Class)((Class)t).getComponentType(); }
 
   private static boolean isBool(Type type) { return type.equals(boolean.class) || type.equals(Boolean.class); }
@@ -154,6 +159,7 @@ class OptInfo {
   // type: the data type of the variable
   // l: the command line arguments to interpret
   private static String errorValue = "ERROR";
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   private static Object interpretValue(Type type, List<String> l, String fullName) {
     int n = l.size();
     String firstArg = n > 0 ? l.get(0) : null;
@@ -342,6 +348,7 @@ class OptInfo {
     return false;
   }
 
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public boolean set(List<String> l, boolean append) {
     try {
       Object v = interpretValue(getGenericType(), l, fullName());
@@ -428,6 +435,7 @@ public class OptionsParser {
     return this;
   }
 
+  @SuppressWarnings("rawtypes")
   public OptionsParser registerAll(Object[] objects) {
     // Strings are interpreted as the key name for the next object.
     String name = null;
@@ -449,6 +457,7 @@ public class OptionsParser {
     return this;
   }
 
+  @SuppressWarnings("rawtypes")
   private static Class classOf(Object o) {
     return (o instanceof Class) ? (Class)o : o.getClass();
   }
@@ -563,6 +572,7 @@ public class OptionsParser {
       // which annotates the getter.
 
       // Map getter method name to the option
+      @SuppressWarnings({ "rawtypes", "unchecked" })
       HashMap<String,OptInfo> optMap = new HashMap();
 
       for(Method method : classOf(obj).getMethods()) {
@@ -763,6 +773,7 @@ public class OptionsParser {
 
   // If the option is missing, return the message (to be printed out) of why
   // Otherwise, return null
+  @SuppressWarnings("rawtypes")
   private String isMissing(OptInfo o, List<OptInfo> optInfos) {
     if(o.specified) return null; // Specified, we're fine
     if(o.required) return o.toString(); // This option is required
@@ -771,7 +782,6 @@ public class OptionsParser {
       String[] tokens = o.condReq.split("=", 2);
       String name = tokens[0], value = tokens.length == 2 ? tokens[1] : null;
       OptInfo info = findOptInfo(optInfos, name, o.group);
-      boolean missing;
       if(info == null) // Shouldn't happen, but if it does, the user will be notified
         return o.toString() + ", " + name + " not found";
       else if(value == null) { // Just need to be specified

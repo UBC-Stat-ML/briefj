@@ -2,7 +2,6 @@ package briefj.opt;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -449,6 +448,7 @@ public class IOUtils {
       lines.add(line);
     return lines;
   }
+  @SuppressWarnings("unchecked")
   public static List<String> readLinesEasy(String path) {
     try { return readLines(path); }
     catch(IOException e) { return Collections.EMPTY_LIST; }
@@ -469,20 +469,20 @@ public class IOUtils {
     catch(IOException e) { return null; }
   }
 
-  public static void printLines(String path, List lines) throws IOException {
+  public static void printLines(String path, @SuppressWarnings("rawtypes") List lines) throws IOException {
     PrintWriter out = IOUtils.openOut(path);
     printLines(out, lines);
     out.close();
   }
-  public static void printLinesHard(String path, List lines) {
+  public static void printLinesHard(String path, @SuppressWarnings("rawtypes") List lines) {
     try { printLines(path, lines); }
     catch(IOException e) { throw new RuntimeException(e); }
   }
-  public static boolean printLinesEasy(String path, List lines) {
+  public static boolean printLinesEasy(String path, @SuppressWarnings("rawtypes") List lines) {
     try { printLines(path, lines); return true; }
     catch(IOException e) { return false; }
   }
-  public static void printLines(PrintWriter out, List lines) {
+  public static void printLines(PrintWriter out, @SuppressWarnings("rawtypes") List lines) {
     for(Object line : lines)
       out.println(StrUtils.toString(line));
   }

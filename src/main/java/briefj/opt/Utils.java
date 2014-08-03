@@ -125,7 +125,7 @@ public class Utils {
     catch(NumberFormatException e) { throw new RuntimeException("Invalid format: " + s); }
   }
 
-  public static Object parseEnum(Class c, String s) {
+  public static Object parseEnum(@SuppressWarnings("rawtypes") Class c, String s) {
     s = s.toLowerCase();
     for(Object o : c.getEnumConstants())
       if(o.toString().toLowerCase().equals(s))

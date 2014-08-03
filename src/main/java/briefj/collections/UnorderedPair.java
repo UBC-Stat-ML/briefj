@@ -25,6 +25,7 @@ public class UnorderedPair<F,S> {
     if (this == o) return true;
     if (!(o instanceof UnorderedPair)) return false;
 
+    @SuppressWarnings("rawtypes")
     final UnorderedPair pair = (UnorderedPair) o;
 
     return (((first == null ? pair.first == null : first.equals(pair.first)) && (second == null ? pair.second == null : second.equals(pair.second))) || ((first == null ? pair.second == null : first.equals(pair.second)) && (second == null ? pair.first == null : second.equals(pair.first))));

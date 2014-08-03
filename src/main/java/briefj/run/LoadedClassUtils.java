@@ -21,7 +21,7 @@ public class LoadedClassUtils
     ClassLoader[] loaders = new ClassLoader[] { appLoader, currentLoader };
     final Class< ?>[] classes = ClassScope.getLoadedClasses(loaders);
     Set<String> names = Sets.newLinkedHashSet();
-    for (Class c : classes)
+    for (@SuppressWarnings("rawtypes") Class c : classes)
     {
       String current = c.getCanonicalName();
       if (current != null && current.length() > 0)

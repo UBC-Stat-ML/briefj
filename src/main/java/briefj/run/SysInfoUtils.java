@@ -147,7 +147,6 @@ public class SysInfoUtils {
   public static long getFreeMemory() {
     // Linux
     try {
-      int n = 0;
       long memfree = 0, buffers = 0, cached = 0;
       for(String line : IOUtils.readLines("/proc/meminfo")) {
         if(line.startsWith("MemFree:"))

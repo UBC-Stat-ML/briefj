@@ -1,15 +1,10 @@
 package briefj.repo;
 
 import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
-
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import binc.Command;
 import briefj.BriefIO;
-import briefj.BriefLog;
 import briefj.run.Commands;
 import briefj.run.ExecutionInfoFiles;
 
