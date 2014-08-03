@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
 import com.beust.jcommander.internal.Maps;
 import com.google.common.io.Files;
 
@@ -50,6 +52,11 @@ public class OutputManager
     for (int i = 0; i < len; i++)
       toPrint.append("" + keyValues[i*2] + "=" + keyValues[i*2 + 1] + (i == len - 1 ? "" : ", "));
     System.out.println(toPrint);
+  }
+  
+  public void printWrite(String masterKey, SummaryStatistics statistics)
+  {
+    printWrite(masterKey, "mean", statistics.getMean(), "var", statistics.getVariance(), "sd", statistics.getStandardDeviation(), "min", statistics.getMin(), "max", statistics.getMax(), "N", statistics.getN());
   }
   
   /**
