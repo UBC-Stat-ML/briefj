@@ -2,8 +2,13 @@ package briefj.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import briefj.opt.OrderedStringMap;
 import briefj.run.Results;
@@ -40,9 +45,56 @@ public class Records
     insertInto();
   }
   
+  private Set<String> cleanSet(OrderedStringMap set)
+  {
+    Set<String> clean = new HashSet<String>(); 
+    for(String val : set.keys())
+      clean.add(val.replace(".", ""));
+    return clean;
+  }
+  
+  private void alterTable(String newCol)
+  {
+    StringBuilder str = new StringBuilder(); 
+    str.append("ALTER TABLE ");
+    str.append(DB_TABLE);
+    str.append(" ADD column ");
+    str.append(newCol);
+    str.append(" string DEFAULT NULL");
+
+    try
+    {
+      Statement statement = conn.createStatement();
+      statement.execute(str.toString());
+     
+    } catch (SQLException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  
+  
   
   private void insertInto()
   {
+    Set<String> variables = getCurrentCols();
+    
+    int nRecorded = variables.size();
+    int n2Input = options.size() + output.size() + 3;
+    
+    if (nRecorded != n2Input)
+    {
+      Set<String> addCols = cleanSet(options);
+      addCols.addAll(cleanSet(output));
+      addCols.removeAll(variables);
+      
+      for(String newCol : addCols)
+        alterTable(newCol);
+
+    }   
+ 
+    
+    
     StringBuilder colNames = new StringBuilder();
     StringBuilder values = new StringBuilder();
     colNames.append(" (");
@@ -112,6 +164,28 @@ public class Records
     strValues.deleteCharAt(strValues.lastIndexOf(","));
   }
   
+  private Set<String> getCurrentCols()
+  {
+
+    Set<String> variables = new HashSet<String>();
+
+    try
+    {
+      Statement statement = conn.createStatement();
+      ResultSet res = statement.executeQuery("pragma table_info(run)");
+      while( res.next())
+      {
+        variables.add(res.getString("name"));
+      }
+      res.close();
+    } catch (SQLException e)
+    {
+      e.printStackTrace();
+    }
+    return variables;
+  }
+
+  
   public void ensureInitalized() throws ClassNotFoundException
   {
     if (conn != null)
@@ -125,7 +199,6 @@ public class Records
     Class.forName("org.sqlite.JDBC");
     try
     {
-      System.out.println(CONN_PATH + "/" + DB_NAME);
       conn = DriverManager.getConnection("jdbc:sqlite:/" + CONN_PATH + "/" + DB_NAME);
     } catch (SQLException e)
     {
