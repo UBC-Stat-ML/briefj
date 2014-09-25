@@ -12,6 +12,7 @@ import static briefj.run.ExecutionInfoFiles.OPTIONS_MAP;
 import static briefj.run.ExecutionInfoFiles.REPOSITORY_INFO;
 import static briefj.run.ExecutionInfoFiles.START_TIME_FILE;
 import static briefj.run.ExecutionInfoFiles.STD_OUT_FILE;
+import static briefj.run.ExecutionInfoFiles.OUT_MAP;
 import static briefj.run.ExecutionInfoFiles.exists;
 import static briefj.run.ExecutionInfoFiles.getExecutionInfoFolder;
 import static briefj.run.ExecutionInfoFiles.getFile;
@@ -19,7 +20,9 @@ import static briefj.run.ExecutionInfoFiles.getFile;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import briefj.BriefStrings;
+import briefj.db.Records;
 import briefj.opt.OptionsParser;
+import briefj.opt.OrderedStringMap;
 import briefj.repo.RepositoryUtils;
 import briefj.run.RedirectionUtils.Tees;
 
@@ -49,10 +52,10 @@ public class Mains
         null :
         RedirectionUtils.createTees(getExecutionInfoFolder());
     
-    boolean optionReadSuccessfully = recordPermanentState(args, mainClass);
+    RecordPermanentStateResults optsRead = recordPermanentState(args, mainClass);
     recordTransientInfo(args, mainClass, startTime);
     
-    if (optionReadSuccessfully)
+    if (optsRead.optionReadSuccessfully)
       try 
       {
         // start job
@@ -71,9 +74,18 @@ public class Mains
     
     System.out.println("executionMilliseconds : " + (endTime - startTime));
     System.out.println("outputFolder : " + Results.getResultFolder().getAbsolutePath());
+      
     
     if (tees != null)
       tees.close();
+    
+    outputMap.printEasy(getFile(OUT_MAP));
+    
+    if(System.getenv().get("CONN_PATH") != null)
+    {
+      Records rec = new Records(optsRead.options, outputMap, Results.getResultFolder().toString());
+      rec.recordFullRun();  
+    }
   }
 
   private static void recordTransientInfo(String[] args, Runnable mainClass, long startTime)
@@ -95,13 +107,28 @@ public class Mains
            "NumCPUs\t" + SysInfoUtils.getNumCPUs();
   }
 
+  
+  private static class RecordPermanentStateResults
+  {
+    public boolean optionReadSuccessfully;
+    public OrderedStringMap options;
+    
+    public RecordPermanentStateResults(boolean optionReadSuccessfully, OrderedStringMap options)
+    {
+      this.optionReadSuccessfully = optionReadSuccessfully;
+      this.options = options;
+    }
+   
+  }
+  
+  
   /**
    * 
    * @param args
    * @param mainClass
    * @return If the options were read successfully.
    */
-  private static boolean recordPermanentState(String[] args, Runnable mainClass)
+  private static RecordPermanentStateResults recordPermanentState(String[] args, Runnable mainClass)
   {
     // record command line options
     OptionsParser parser;
@@ -113,7 +140,7 @@ public class Mains
     }
     catch (OptionsUtils.InvalidOptionsException e)
     {
-      return false;
+      return new RecordPermanentStateResults(false, null);
     }
     
     if (!exists(REPOSITORY_INFO))
@@ -140,6 +167,21 @@ public class Mains
     // global hash code of the execution inputs, repository, etc
     HashCode global = HashUtils.computeFileHashCodesRecursively(getExecutionInfoFolder());
     write(getFile(GLOBAL_HASH), global.toString());
-    return true;
+    return new RecordPermanentStateResults(true, parser.getOptionPairs());
   }
+  
+  /**
+   * Modified from Percy Liang's fig
+   * https://github.com/percyliang/fig
+   */
+  public static void putLogRec(String key, Object value)
+  {
+    outputMap.put(key, value.toString());
+  }
+  
+  private static OrderedStringMap outputMap = new OrderedStringMap();
+  
+
+  
+  
 }
