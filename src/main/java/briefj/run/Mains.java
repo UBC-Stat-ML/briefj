@@ -83,7 +83,7 @@ public class Mains
     
     if(System.getenv().get("CONN_PATH") != null)
     {
-      Records rec = new Records(optsRead.options, outputMap, Results.getResultFolder().toString());
+      Records rec = new Records(optsRead.options.asLinkedHashMap(), outputMap.asLinkedHashMap(), Results.getResultFolder());
       rec.recordFullRun();  
     }
   }

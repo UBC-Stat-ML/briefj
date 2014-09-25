@@ -27,6 +27,12 @@ public class BriefFiles
     return BriefFiles.ls(basePath, "");
   }
 
+  /**
+   * 
+   * @param basePath
+   * @param suffixFilter Do NOT include the period
+   * @return The files under the basePath that match the filter, sorted by name.
+   */
   public static List<File> ls(final File basePath, final String suffixFilter) 
   {
     final FilenameFilter filter = (suffixFilter == null || suffixFilter.equals("") ?

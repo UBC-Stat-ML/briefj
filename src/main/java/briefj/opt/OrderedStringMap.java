@@ -16,7 +16,7 @@ public class OrderedStringMap extends OrderedMap<String, String> {
     for(String key : map.keys())
       put(key, map.get(key));
   }
-
+  
   public static OrderedStringMap fromFile(String path) throws IOException {
     return fromFile(new File(path));
   }

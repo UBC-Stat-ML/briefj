@@ -1,54 +1,51 @@
 package briefj.db;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import briefj.opt.OrderedStringMap;
-import briefj.run.Results;
 
 public class Records
 {
   
   private Connection conn;
   final private String CONN_PATH;
-  final private String DB_NAME = "index.db";
+  private String DB_NAME = "index.db";
   final private String DB_TABLE = "run";
-  final private OrderedStringMap options;
-  final private OrderedStringMap output;
+  final private LinkedHashMap<String,String> options, output;
   final private String folderLocation;
   
-  public Records(OrderedStringMap options, OrderedStringMap output, String folderLocation)
+  public Records(LinkedHashMap<String,String> options, LinkedHashMap<String,String> output, File execFolderLocation)
+  {
+    this(options, output, execFolderLocation, new File(System.getenv().get("CONN_PATH")));
+  }
+  
+  public Records(LinkedHashMap<String,String> options, LinkedHashMap<String,String> output, File execFolderLocation, File dbLocation)
   {
     this.options = options;
     this.output = output;
-    this.folderLocation = folderLocation;
-    this.CONN_PATH = System.getenv().get("CONN_PATH");
+    this.folderLocation = execFolderLocation.toString();
+    this.CONN_PATH = dbLocation.toString();
   }
   
   public void recordFullRun() 
   {
-    try
-    {
-      ensureInitalized();
-    } catch (ClassNotFoundException e)
-    {
-      e.printStackTrace();
-    }
+    ensureInitalized();
     createTable();   
     insertInto();
   }
   
-  private Set<String> cleanSet(OrderedStringMap set)
+  private static Set<String> cleanSet(LinkedHashMap<String,String> set)
   {
-    Set<String> clean = new HashSet<String>(); 
-    for(String val : set.keys())
+    Set<String> clean = new LinkedHashSet<String>(); 
+    for(String val : set.keySet())
       clean.add(val.replace(".", ""));
     return clean;
   }
@@ -144,18 +141,18 @@ public class Records
     
   }
   
-  private static void mapKey2String(OrderedStringMap map, StringBuilder colNames)
+  private static void mapKey2String(LinkedHashMap<String,String> map, StringBuilder colNames)
   {
-    for (String value : map.keys())
+    for (String value : map.keySet())
     {
       String newCol = ", " +  value.replace(".", "") + " string DEFAULT NULL";
       colNames.append(newCol);
     }
   }
   
-  private static void insertStatement(OrderedStringMap map, StringBuilder strNames, StringBuilder strValues)
+  private static void insertStatement(LinkedHashMap<String,String> map, StringBuilder strNames, StringBuilder strValues)
   {
-    for(String value: map.keys())
+    for(String value: map.keySet())
     {
       strNames.append(value.replace(".", "") + ", ");
       strValues.append("'" + map.get(value) + "', ");
@@ -186,7 +183,7 @@ public class Records
   }
 
   
-  public void ensureInitalized() throws ClassNotFoundException
+  public void ensureInitalized()
   {
     if (conn != null)
       return;
@@ -194,16 +191,21 @@ public class Records
   }
   
   
-  public void connect() throws ClassNotFoundException
+  public void connect()
   {
-    Class.forName("org.sqlite.JDBC");
     try
     {
+      Class.forName("org.sqlite.JDBC");
       conn = DriverManager.getConnection("jdbc:sqlite:/" + CONN_PATH + "/" + DB_NAME);
-    } catch (SQLException e)
+    } catch (Exception e)
     {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
+  }
+
+  public void setDB_NAME(String dB_NAME)
+  {
+    DB_NAME = dB_NAME;
   }
   
 }
