@@ -7,7 +7,7 @@ import java.io.File;
 
 public class ExecutionInfoFiles
 {
-  private static final String infoFileDirectoryName = "executionInfo";
+  public static final String infoFileDirectoryName = "executionInfo";
   
   public static File getExecutionInfoFolder()
   {

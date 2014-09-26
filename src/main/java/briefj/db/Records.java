@@ -8,53 +8,125 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 
 public class Records
 {
+  private static final String FOLDER_LOCATION_COLUMN = "folder_location";
+  private static final String TIME_STAMP_COLUMN_NAME = "time_stamp";
+  private static final String ID_COLUMN_NAME = "id";
+  private static final String databaseTableName = "run";
   
-  private Connection conn;
-  final private String CONN_PATH;
-  private String DB_NAME = "index.db";
-  final private String DB_TABLE = "run";
-  final private LinkedHashMap<String,String> options, output;
-  final private String folderLocation;
+  private final Connection conn;
   
-  public Records(LinkedHashMap<String,String> options, LinkedHashMap<String,String> output, File execFolderLocation)
+  public static Records recordsFromEnvironmentVariable()
   {
-    this(options, output, execFolderLocation, new File(System.getenv().get("CONN_PATH")));
+    File dbFile = new File(System.getenv().get("CONN_PATH"), "index.db");
+    return new Records(dbFile);
   }
   
-  public Records(LinkedHashMap<String,String> options, LinkedHashMap<String,String> output, File execFolderLocation, File dbLocation)
+  public Records(File dbFile)
   {
-    this.options = options;
-    this.output = output;
-    this.folderLocation = execFolderLocation.toString();
-    this.CONN_PATH = dbLocation.toString();
+    this.conn = connect(dbFile);
   }
   
-  public void recordFullRun() 
+  public void recordFullRun(LinkedHashMap<String, String> options, LinkedHashMap<String, String> output, File execDir) 
   {
-    ensureInitalized();
-    createTable();   
-    insertInto();
+    LinkedHashMap<String, String> keyValuePairs = Maps.newLinkedHashMap();
+    if (options != null)
+      keyValuePairs.putAll(options);
+    if (output != null)
+      keyValuePairs.putAll(output);
+    if (execDir != null)
+      keyValuePairs.put(FOLDER_LOCATION_COLUMN, execDir.toString());
+    record(keyValuePairs);
   }
   
-  private static Set<String> cleanSet(LinkedHashMap<String,String> set)
+  public void recordFullRun(LinkedHashMap<String, String> options,
+      File resultDirectory)
   {
-    Set<String> clean = new LinkedHashSet<String>(); 
-    for(String val : set.keySet())
-      clean.add(val.replace(".", ""));
+    recordFullRun(options, null, resultDirectory);
+  }
+  
+  public void record(LinkedHashMap<String, String> keyValuePairs) 
+  {
+    ensureTableCreated();   
+    insertInto(keyValuePairs);
+  }
+  
+  public static LinkedHashMap<String,String> cleanColumnNames(Map<String,String> datum)
+  {
+    LinkedHashMap<String,String> clean = new LinkedHashMap<String,String>(); 
+    for(String columnName : datum.keySet())
+      clean.put(cleanColumnName(columnName), datum.get(columnName));
+    
+    if (datum.keySet().size() != clean.keySet().size())
+      throw new RuntimeException("Cleaning sql table names created a clash. \nBefore: " + datum + "\nAfter: " + clean);
+    
     return clean;
+  }
+  
+  public Set<String> recordedExecFolders()
+  {
+    try
+    {
+      Set<String> result = Sets.newHashSet();
+      Statement stmt = conn.createStatement();
+      String sql = "SELECT " + FOLDER_LOCATION_COLUMN + " FROM " + databaseTableName;
+      ResultSet rs = stmt.executeQuery(sql);
+      
+      while(rs.next())
+      {
+        String last = rs.getString(FOLDER_LOCATION_COLUMN);
+        result.add(last);
+      }
+      
+      return result;
+    }
+    catch (Exception e)
+    {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  /**
+   * 
+   * @param string
+   * @return A string suitable for unquoted sql table column name.
+   */
+  private static String cleanColumnName(String string)
+  {
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i < string.length(); i++)
+    {
+      char current = string.charAt(i);
+      if ((current >= 'a' && current <= 'z'))
+        result.append(current);
+      else if ((current >= 'A' && current <= 'Z'))
+      {
+        if (i > 0 && (string.charAt(i-1) >= 'a' && string.charAt(i-1) <= 'z'))
+          result.append("_");
+        result.append(Character.toLowerCase(current));
+      }
+      else
+        result.append("_");
+    }
+    if (SqlKeywords.keywords.contains(result.toString()))
+      return "_" + result;
+    else
+      return result.toString();
   }
   
   private void alterTable(String newCol)
   {
     StringBuilder str = new StringBuilder(); 
     str.append("ALTER TABLE ");
-    str.append(DB_TABLE);
+    str.append(databaseTableName);
     str.append(" ADD column ");
     str.append(newCol);
     str.append(" string DEFAULT NULL");
@@ -70,47 +142,35 @@ public class Records
     }
   }
   
-  
-  
-  private void insertInto()
+  private void insertInto(Map<String,String> _keyValuePairs)
   {
+    LinkedHashMap<String,String> keyValuePairs = cleanColumnNames(_keyValuePairs);
     Set<String> variables = getCurrentCols();
     
     int nRecorded = variables.size();
-    int n2Input = options.size() + output.size() + 3;
+    int n2Input = keyValuePairs.size() + 2;
     
     if (nRecorded != n2Input)
     {
-      Set<String> addCols = cleanSet(options);
-      addCols.addAll(cleanSet(output));
+      Set<String> addCols = Sets.newHashSet(keyValuePairs.keySet());
       addCols.removeAll(variables);
       
       for(String newCol : addCols)
         alterTable(newCol);
 
     }   
- 
-    
     
     StringBuilder colNames = new StringBuilder();
     StringBuilder values = new StringBuilder();
     colNames.append(" (");
     values.append(" (");
-    insertStatement(options, colNames, values);
-    colNames.append(", ");
-    values.append(", ");
-    insertStatement(output, colNames, values);
-    
-    colNames.append(", folderLocation");
-    values.append(", '" + folderLocation + "'");
-    
+    insertStatement(keyValuePairs, colNames, values);
     colNames.append(")");
     values.append(")");
-    Statement statement;
     try
     {
-      statement = conn.createStatement();
-      String insert = "INSERT INTO " + DB_TABLE + colNames + 
+      Statement statement = conn.createStatement();
+      String insert = "INSERT INTO " + databaseTableName + colNames + 
           " VALUES" + values;
       statement.execute(insert);
     } catch (SQLException e)
@@ -120,16 +180,11 @@ public class Records
        
   }
   
-  
-  
-  private void createTable()
+  private void ensureTableCreated()
   {
     StringBuilder colNames = new StringBuilder();   
-    String createTable = "CREATE TABLE IF NOT EXISTS " + DB_TABLE +  
-    " (id INTEGER PRIMARY KEY AUTOINCREMENT ";
-    mapKey2String(options, colNames);
-    mapKey2String(output, colNames);
-    colNames.append(", folderLocation string, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+    String createTable = "CREATE TABLE IF NOT EXISTS " + databaseTableName +  
+    " (" + ID_COLUMN_NAME + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TIME_STAMP_COLUMN_NAME + " DATETIME DEFAULT CURRENT_TIMESTAMP)";
     try
     {
       Statement statement = conn.createStatement();
@@ -141,29 +196,21 @@ public class Records
     
   }
   
-  private static void mapKey2String(LinkedHashMap<String,String> map, StringBuilder colNames)
-  {
-    for (String value : map.keySet())
-    {
-      String newCol = ", " +  value.replace(".", "") + " string DEFAULT NULL";
-      colNames.append(newCol);
-    }
-  }
-  
   private static void insertStatement(LinkedHashMap<String,String> map, StringBuilder strNames, StringBuilder strValues)
   {
-    for(String value: map.keySet())
+    if (map.isEmpty())
+      return;
+    for(String key : map.keySet())
     {
-      strNames.append(value.replace(".", "") + ", ");
-      strValues.append("'" + map.get(value) + "', ");
+      strNames.append(key + ", "); // already cleaned
+      strValues.append("'" + map.get(key) + "', ");
     }
     strNames.deleteCharAt(strNames.lastIndexOf(","));
     strValues.deleteCharAt(strValues.lastIndexOf(","));
   }
   
-  private Set<String> getCurrentCols()
+  public Set<String> getCurrentCols()
   {
-
     Set<String> variables = new HashSet<String>();
 
     try
@@ -177,35 +224,22 @@ public class Records
       res.close();
     } catch (SQLException e)
     {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
     return variables;
   }
-
   
-  public void ensureInitalized()
-  {
-    if (conn != null)
-      return;
-    connect();
-  }
-  
-  
-  public void connect()
+  private Connection connect(File databaseFile)
   {
     try
     {
       Class.forName("org.sqlite.JDBC");
-      conn = DriverManager.getConnection("jdbc:sqlite:/" + CONN_PATH + "/" + DB_NAME);
+      return DriverManager.getConnection("jdbc:sqlite:/" + databaseFile.getAbsolutePath());
     } catch (Exception e)
     {
       throw new RuntimeException(e);
     }
   }
 
-  public void setDB_NAME(String dB_NAME)
-  {
-    DB_NAME = dB_NAME;
-  }
   
 }

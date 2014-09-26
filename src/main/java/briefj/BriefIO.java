@@ -330,5 +330,5 @@ public class BriefIO
   {
     return prompt(null);
   }
-
+  
 }
