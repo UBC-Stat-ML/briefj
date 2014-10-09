@@ -74,7 +74,7 @@ public final class Indexer<T> implements Serializable
   }
   
   /**
-   * @see o2i, only the behavior when the object is not there is different.
+   * See o2i, only the behavior when the object is not there is different.
    * @param o
    * @return The index, or -1 if not in the set of indexed objects.
    */

@@ -18,9 +18,7 @@ public class BriefFiles
   /**
    * list, filtering with the given suffix (case unsensitive) and sort by name
    * @param basePath
-   * @param suffixFilter
    * @return
-   * @throws FileNotFoundException
    */
   public static List<File> ls(final File basePath) 
   {

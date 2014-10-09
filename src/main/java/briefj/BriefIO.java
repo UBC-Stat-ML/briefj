@@ -89,8 +89,6 @@ public class BriefIO
   
   /**
    * 
-   * @param str
-   * @return
    * 
    * Note: to make work in eclipse, add resources folder in Run config/classpath/user entry/advanced/folder
    * Actually, does not seem needed as long as resource folder properly included in the build path

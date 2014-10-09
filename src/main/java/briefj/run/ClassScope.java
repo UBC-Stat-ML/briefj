@@ -63,13 +63,6 @@ public class ClassScope
       * Given a class loader instance, returns all classes currently loaded by
       * that class loader.
       *
-      * @param defining
-      *            class loader to inspect [may not be null]
-      * @return Class array such that every Class has 'loader' as its defining
-      *         class loader [never null, may be empty]
-      *
-      * @throws RuntimeException
-      *            if the "classes" field hack is not possible in this JRE
       */
      @SuppressWarnings("unchecked")
      public static Class<?>[] getLoadedClasses(final ClassLoader loader) {
@@ -112,12 +105,6 @@ public class ClassScope
       * A convenience multi-loader version of
       * {@link #getLoadedClasses(ClassLoader)}.
       *
-      * @param an
-      *            array of defining class loaders to inspect [may not be null]
-      * @return Class<?> array [never null, may be empty]
-      *
-      * @throws RuntimeException
-      *             if the "classes" field hack is not possible in this JRE
       */
      public static Class<?>[] getLoadedClasses(final ClassLoader[] loaders) {
            if (loaders == null)
@@ -172,8 +159,8 @@ public class ClassScope
      }
  
      /**
-      * Given a Class<?> object, attempts to find its .class location [returns
-      * null if no such definiton could be found].
+      * Given a Class object, attempts to find its .class location [returns
+      * null if no such definition could be found].
       *
       * @return URL that points to the class definition [null if not found]
       */
