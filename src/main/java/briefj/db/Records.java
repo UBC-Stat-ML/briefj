@@ -8,8 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -23,6 +26,7 @@ public class Records
   private static final String databaseTableName = "run";
   
   private final Connection conn;
+  private final File dbFile;
   
   public static Records recordsFromEnvironmentVariable()
   {
@@ -33,6 +37,7 @@ public class Records
   public Records(File dbFile)
   {
     this.conn = connect(dbFile);
+    this.dbFile = dbFile;
   }
   
   public void recordFullRun(LinkedHashMap<String, String> options, LinkedHashMap<String, String> output, File execDir) 
@@ -209,6 +214,21 @@ public class Records
     strValues.deleteCharAt(strValues.lastIndexOf(","));
   }
   
+  public ResultSet select(String entries, String constraint)
+  {
+    try
+    {
+      Statement statement = conn.createStatement();
+      return statement.executeQuery("SELECT " + entries + 
+          " FROM " + databaseTableName +
+          (StringUtils.isEmpty(constraint) ? "" : " WHERE " + constraint));
+    } 
+    catch (SQLException e)
+    {
+      throw new RuntimeException(e);
+    }
+  }
+  
   public Set<String> getCurrentCols()
   {
     Set<String> variables = new HashSet<String>();
@@ -239,6 +259,11 @@ public class Records
     {
       throw new RuntimeException(e);
     }
+  }
+
+  public File getDbFile()
+  {
+    return dbFile;
   }
 
   
