@@ -171,7 +171,7 @@ public class BriefIO
         final int size = keys.size();
         if (size != values.size())
           throw new RuntimeException("The number of keys should have the same length as the number of values.");
-        Map<String,String> result = Maps.newHashMap();
+        Map<String,String> result = Maps.newLinkedHashMap();
         for (int i = 0; i < size; i++)
           result.put(keys.get(i), values.get(i));
         return result;
