@@ -5,7 +5,7 @@ apply plugin: 'maven'
 uploadArchives {
   repositories.mavenDeployer {
     repository(url: "file:///Users/bouchard/Documents/web/public_html/maven/")
-    pom.version = "2.4.1"
+    pom.version = "2.4.2"
     pom.artifactId = "briefj"
     pom.groupId = "ca.ubc.stat"
   }
@@ -40,10 +40,10 @@ dependencies {
   compile group: 'ca.ubc.stat', name: 'tutorialj', version: '2.0.2'
   compile 'org.apache.commons:commons-math3:3.3'
   compile group: 'ca.ubc.stat', name: 'binc', version: '1.2.1'
-  compile 'org.eclipse.jgit:org.eclipse.jgit:3.5.0.201409071800-rc1'
+  compile 'org.eclipse.jgit:org.eclipse.jgit:3.5.0.201409260305-r'
   compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.3.2'
   compile 'com.google.code.gson:gson:2.3'
-  compile 'org.xerial:sqlite-jdbc:3.8.5-pre1'
+  compile 'org.xerial:sqlite-jdbc:3.8.6'
 }
 
 task(tutorialj, dependsOn: ['build','testClasses'], type: JavaExec) {
