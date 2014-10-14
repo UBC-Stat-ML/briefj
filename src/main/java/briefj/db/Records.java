@@ -20,10 +20,10 @@ import com.google.common.collect.Sets;
 
 public class Records
 {
-  private static final String FOLDER_LOCATION_COLUMN = "folder_location";
-  private static final String TIME_STAMP_COLUMN_NAME = "time_stamp";
-  private static final String ID_COLUMN_NAME = "id";
-  private static final String databaseTableName = "run";
+  public static final String FOLDER_LOCATION_COLUMN = "folder_location";
+  public static final String TIME_STAMP_COLUMN_NAME = "time_stamp";
+  public static final String ID_COLUMN_NAME = "id";
+  public static final String databaseTableName = "run";
   
   private final Connection conn;
   private final File dbFile;
