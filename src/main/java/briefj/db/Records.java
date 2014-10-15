@@ -216,16 +216,18 @@ public class Records
   
   public ResultSet select(String entries, String constraint)
   {
+    String query = "";
     try
     {
       Statement statement = conn.createStatement();
-      return statement.executeQuery("SELECT " + entries + 
+      query = "SELECT " + entries + 
           " FROM " + databaseTableName +
-          (StringUtils.isEmpty(constraint) ? "" : " WHERE " + constraint));
+          (StringUtils.isEmpty(constraint) ? "" : " WHERE " + constraint);
+      return statement.executeQuery(query);
     } 
     catch (SQLException e)
     {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Problematic query: " + query + "\nDetails:\n" + e);
     }
   }
   
