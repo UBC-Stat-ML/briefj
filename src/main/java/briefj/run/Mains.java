@@ -154,8 +154,8 @@ public class Mains
     }
     catch (RuntimeException e)
     {
-        System.err.println("Warning: ");
-        System.err.println(ExceptionUtils.getStackTrace(e));
+        System.err.println("WARNING: Bare Repository has neither a working tree, nor an index.");
+        write(getFile(EXCEPTION_FILE), ExceptionUtils.getStackTrace(e));
     }
 
     if (!exists(CLASSPATH_INFO))
