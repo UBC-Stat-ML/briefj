@@ -143,13 +143,21 @@ public class Mains
       return new RecordPermanentStateResults(false, null);
     }
     
-    if (!exists(REPOSITORY_INFO))
-      if (!RepositoryUtils.recordCodeVersion(mainClass))
-        // if there were dirty file (i.e. not in version control) write a random string to avoid collisions
-        write(
-            getFile(DIRTY_FILE_RANDOM_HASH), 
-            HashUtils.HASH_FUNCTION.hashUnencodedChars(BriefStrings.generateUniqueId()).toString());
-    
+    try
+    {
+        if (!exists(REPOSITORY_INFO))
+            if (!RepositoryUtils.recordCodeVersion(mainClass))
+                // if there were dirty file (i.e. not in version control) write a random string to avoid collisions
+                write(
+                        getFile(DIRTY_FILE_RANDOM_HASH), 
+                        HashUtils.HASH_FUNCTION.hashUnencodedChars(BriefStrings.generateUniqueId()).toString());
+    }
+    catch (RuntimeException e)
+    {
+        System.err.println("Warning: ");
+        System.err.println(ExceptionUtils.getStackTrace(e));
+    }
+
     if (!exists(CLASSPATH_INFO))
       DependencyUtils.recordClassPath();
      
