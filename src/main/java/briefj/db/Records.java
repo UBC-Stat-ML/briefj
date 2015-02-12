@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +37,17 @@ public class Records
   {
     this.conn = connect(dbFile);
     this.dbFile = dbFile;
+  }
+  
+  public void close()
+  {
+    try
+    {
+      conn.close();
+    } catch (SQLException e)
+    {
+      throw new RuntimeException(e);
+    }
   }
   
   public void recordFullRun(LinkedHashMap<String, String> options, LinkedHashMap<String, String> output, File execDir) 
@@ -129,6 +139,7 @@ public class Records
   
   private void alterTable(String newCol)
   {
+    _variables = null;
     StringBuilder str = new StringBuilder(); 
     str.append("ALTER TABLE ");
     str.append(databaseTableName);
@@ -140,7 +151,7 @@ public class Records
     {
       Statement statement = conn.createStatement();
       statement.execute(str.toString());
-     
+      
     } catch (SQLException e)
     {
       e.printStackTrace();
@@ -172,15 +183,18 @@ public class Records
     insertStatement(keyValuePairs, colNames, values);
     colNames.append(")");
     values.append(")");
+    String insert = null;
     try
     {
       Statement statement = conn.createStatement();
-      String insert = "INSERT INTO " + databaseTableName + colNames + 
+      insert = "INSERT INTO " + databaseTableName + colNames + 
           " VALUES" + values;
       statement.execute(insert);
+      statement.close();
     } catch (SQLException e)
     {
-      e.printStackTrace();
+      System.out.println("Bad query: " + insert);
+      throw new RuntimeException(e);
     }
        
   }
@@ -208,7 +222,7 @@ public class Records
     for(String key : map.keySet())
     {
       strNames.append(key + ", "); // already cleaned
-      strValues.append("'" + map.get(key) + "', ");
+      strValues.append("'" + (map.get(key) != null ? map.get(key).replace("'", "''") : null) + "', ");
     }
     strNames.deleteCharAt(strNames.lastIndexOf(","));
     strValues.deleteCharAt(strValues.lastIndexOf(","));
@@ -231,24 +245,26 @@ public class Records
     }
   }
   
+  private Set<String> _variables = null;
   public Set<String> getCurrentCols()
   {
-    Set<String> variables = new HashSet<String>();
+    if (_variables != null)
+      return _variables;
+    
+    _variables = new HashSet<String>();
 
     try
     {
       Statement statement = conn.createStatement();
       ResultSet res = statement.executeQuery("pragma table_info(run)");
       while( res.next())
-      {
-        variables.add(res.getString("name"));
-      }
+        _variables.add(res.getString("name"));
       res.close();
     } catch (SQLException e)
     {
       throw new RuntimeException(e);
     }
-    return variables;
+    return _variables;
   }
   
   private Connection connect(File databaseFile)
