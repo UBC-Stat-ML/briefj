@@ -24,7 +24,7 @@ public class Records
   public static final String ID_COLUMN_NAME = "id";
   public static final String databaseTableName = "run";
   
-  private final Connection conn;
+  public final Connection conn;
   private final File dbFile;
   
   public static Records recordsFromEnvironmentVariable()
