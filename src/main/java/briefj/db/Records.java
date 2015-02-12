@@ -100,7 +100,7 @@ public class Records
         String last = rs.getString(FOLDER_LOCATION_COLUMN);
         result.add(last);
       }
-      
+      rs.close();
       return result;
     }
     catch (Exception e)
@@ -199,8 +199,11 @@ public class Records
        
   }
   
+  private boolean _tableCreationChecked = false;
   private void ensureTableCreated()
   {
+    if (_tableCreationChecked)
+      return;
     StringBuilder colNames = new StringBuilder();   
     String createTable = "CREATE TABLE IF NOT EXISTS " + databaseTableName +  
     " (" + ID_COLUMN_NAME + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TIME_STAMP_COLUMN_NAME + " DATETIME DEFAULT CURRENT_TIMESTAMP)";
@@ -208,6 +211,8 @@ public class Records
     {
       Statement statement = conn.createStatement();
       statement.execute(createTable + colNames.toString());
+      statement.close();
+      _tableCreationChecked = true;
     } catch (SQLException e)
     {
       e.printStackTrace();
