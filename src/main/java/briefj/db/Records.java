@@ -227,7 +227,10 @@ public class Records
     for(String key : map.keySet())
     {
       strNames.append(key + ", "); // already cleaned
-      strValues.append("'" + (map.get(key) != null ? map.get(key).replace("'", "''") : null) + "', ");
+      if (map.get(key) == null)
+        strValues.append("NULL, ");
+      else
+        strValues.append("'" + map.get(key).replace("'", "''") + "', ");
     }
     strNames.deleteCharAt(strNames.lastIndexOf(","));
     strValues.deleteCharAt(strValues.lastIndexOf(","));
