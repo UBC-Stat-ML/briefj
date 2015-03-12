@@ -1,63 +1,148 @@
 package briefj.db;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import briefj.opt.OrderedStringMap;
-import briefj.run.Results;
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 
 public class Records
 {
+  public static final String FOLDER_LOCATION_COLUMN = "folder_location";
+  public static final String TIME_STAMP_COLUMN_NAME = "time_stamp";
+  public static final String ID_COLUMN_NAME = "id";
+  public static final String databaseTableName = "run";
   
-  private Connection conn;
-  final private String CONN_PATH;
-  final private String DB_NAME = "index.db";
-  final private String DB_TABLE = "run";
-  final private OrderedStringMap options;
-  final private OrderedStringMap output;
-  final private String folderLocation;
+  public final Connection conn;
+  private final File dbFile;
   
-  public Records(OrderedStringMap options, OrderedStringMap output, String folderLocation)
+  public static Records recordsFromEnvironmentVariable()
   {
-    this.options = options;
-    this.output = output;
-    this.folderLocation = folderLocation;
-    this.CONN_PATH = System.getenv().get("CONN_PATH");
+    File dbFile = new File(System.getenv().get("CONN_PATH"), "index.db");
+    return new Records(dbFile);
   }
   
-  public void recordFullRun() 
+  public Records(File dbFile)
+  {
+    this.conn = connect(dbFile);
+    this.dbFile = dbFile;
+  }
+  
+  public void close()
   {
     try
     {
-      ensureInitalized();
-    } catch (ClassNotFoundException e)
+      conn.close();
+    } catch (SQLException e)
     {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
-    createTable();   
-    insertInto();
   }
   
-  private Set<String> cleanSet(OrderedStringMap set)
+  public void recordFullRun(LinkedHashMap<String, String> options, LinkedHashMap<String, String> output, File execDir) 
   {
-    Set<String> clean = new HashSet<String>(); 
-    for(String val : set.keys())
-      clean.add(val.replace(".", ""));
+    LinkedHashMap<String, String> keyValuePairs = Maps.newLinkedHashMap();
+    if (options != null)
+      keyValuePairs.putAll(options);
+    if (output != null)
+      keyValuePairs.putAll(output);
+    if (execDir != null)
+      keyValuePairs.put(FOLDER_LOCATION_COLUMN, execDir.toString());
+    record(keyValuePairs);
+  }
+  
+  public void recordFullRun(LinkedHashMap<String, String> options,
+      File resultDirectory)
+  {
+    recordFullRun(options, null, resultDirectory);
+  }
+  
+  public void record(LinkedHashMap<String, String> keyValuePairs) 
+  {
+    ensureTableCreated();   
+    insertInto(keyValuePairs);
+  }
+  
+  public static LinkedHashMap<String,String> cleanColumnNames(Map<String,String> datum)
+  {
+    LinkedHashMap<String,String> clean = new LinkedHashMap<String,String>(); 
+    for(String columnName : datum.keySet())
+      clean.put(cleanColumnName(columnName), datum.get(columnName));
+    
+    if (datum.keySet().size() != clean.keySet().size())
+      throw new RuntimeException("Cleaning sql table names created a clash. \nBefore: " + datum + "\nAfter: " + clean);
+    
     return clean;
+  }
+  
+  public Set<String> recordedExecFolders()
+  {
+    try
+    {
+      Set<String> result = Sets.newHashSet();
+      Statement stmt = conn.createStatement();
+      String sql = "SELECT " + FOLDER_LOCATION_COLUMN + " FROM " + databaseTableName;
+      ResultSet rs = stmt.executeQuery(sql);
+      
+      while(rs.next())
+      {
+        String last = rs.getString(FOLDER_LOCATION_COLUMN);
+        result.add(last);
+      }
+      rs.close();
+      return result;
+    }
+    catch (Exception e)
+    {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  /**
+   * 
+   * @param string
+   * @return A string suitable for unquoted sql table column name.
+   */
+  private static String cleanColumnName(String string)
+  {
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i < string.length(); i++)
+    {
+      char current = string.charAt(i);
+      if ((current >= 'a' && current <= 'z'))
+        result.append(current);
+      else if ((current >= 'A' && current <= 'Z'))
+      {
+        if (i > 0 && (string.charAt(i-1) >= 'a' && string.charAt(i-1) <= 'z'))
+          result.append("_");
+        result.append(Character.toLowerCase(current));
+      }
+      else
+        result.append("_");
+    }
+    if (SqlKeywords.keywords.contains(result.toString()))
+      return "_" + result;
+    else
+      return result.toString();
   }
   
   private void alterTable(String newCol)
   {
+    _variables = null;
     StringBuilder str = new StringBuilder(); 
     str.append("ALTER TABLE ");
-    str.append(DB_TABLE);
+    str.append(databaseTableName);
     str.append(" ADD column ");
     str.append(newCol);
     str.append(" string DEFAULT NULL");
@@ -66,77 +151,68 @@ public class Records
     {
       Statement statement = conn.createStatement();
       statement.execute(str.toString());
-     
+      
     } catch (SQLException e)
     {
       e.printStackTrace();
     }
   }
   
-  
-  
-  private void insertInto()
+  private void insertInto(Map<String,String> _keyValuePairs)
   {
+    LinkedHashMap<String,String> keyValuePairs = cleanColumnNames(_keyValuePairs);
     Set<String> variables = getCurrentCols();
     
     int nRecorded = variables.size();
-    int n2Input = options.size() + output.size() + 3;
+    int n2Input = keyValuePairs.size() + 2;
     
     if (nRecorded != n2Input)
     {
-      Set<String> addCols = cleanSet(options);
-      addCols.addAll(cleanSet(output));
+      Set<String> addCols = Sets.newHashSet(keyValuePairs.keySet());
       addCols.removeAll(variables);
       
       for(String newCol : addCols)
         alterTable(newCol);
 
     }   
- 
-    
     
     StringBuilder colNames = new StringBuilder();
     StringBuilder values = new StringBuilder();
     colNames.append(" (");
     values.append(" (");
-    insertStatement(options, colNames, values);
-    colNames.append(", ");
-    values.append(", ");
-    insertStatement(output, colNames, values);
-    
-    colNames.append(", folderLocation");
-    values.append(", '" + folderLocation + "'");
-    
+    insertStatement(keyValuePairs, colNames, values);
     colNames.append(")");
     values.append(")");
-    Statement statement;
+    String insert = null;
     try
     {
-      statement = conn.createStatement();
-      String insert = "INSERT INTO " + DB_TABLE + colNames + 
+      Statement statement = conn.createStatement();
+      insert = "INSERT INTO " + databaseTableName + colNames + 
           " VALUES" + values;
       statement.execute(insert);
+      statement.close();
     } catch (SQLException e)
     {
-      e.printStackTrace();
+      System.out.println("Bad query: " + insert);
+      throw new RuntimeException(e);
     }
        
   }
   
-  
-  
-  private void createTable()
+  private boolean _tableCreationChecked = false;
+  private void ensureTableCreated()
   {
+    if (_tableCreationChecked)
+      return;
     StringBuilder colNames = new StringBuilder();   
-    String createTable = "CREATE TABLE IF NOT EXISTS " + DB_TABLE +  
-    " (id INTEGER PRIMARY KEY AUTOINCREMENT ";
-    mapKey2String(options, colNames);
-    mapKey2String(output, colNames);
-    colNames.append(", folderLocation string, Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+    String createTable = "CREATE TABLE IF NOT EXISTS " + databaseTableName +  
+    " (" + ID_COLUMN_NAME + " INTEGER PRIMARY KEY AUTOINCREMENT, " + TIME_STAMP_COLUMN_NAME + " DATETIME DEFAULT CURRENT_TIMESTAMP)";
     try
     {
       Statement statement = conn.createStatement();
       statement.execute(createTable + colNames.toString());
+      statement.close();
+      _tableCreationChecked = true;
     } catch (SQLException e)
     {
       e.printStackTrace();
@@ -144,66 +220,77 @@ public class Records
     
   }
   
-  private static void mapKey2String(OrderedStringMap map, StringBuilder colNames)
+  private static void insertStatement(LinkedHashMap<String,String> map, StringBuilder strNames, StringBuilder strValues)
   {
-    for (String value : map.keys())
+    if (map.isEmpty())
+      return;
+    for(String key : map.keySet())
     {
-      String newCol = ", " +  value.replace(".", "") + " string DEFAULT NULL";
-      colNames.append(newCol);
-    }
-  }
-  
-  private static void insertStatement(OrderedStringMap map, StringBuilder strNames, StringBuilder strValues)
-  {
-    for(String value: map.keys())
-    {
-      strNames.append(value.replace(".", "") + ", ");
-      strValues.append("'" + map.get(value) + "', ");
+      strNames.append(key + ", "); // already cleaned
+      if (map.get(key) == null)
+        strValues.append("NULL, ");
+      else
+        strValues.append("'" + map.get(key).replace("'", "''") + "', ");
     }
     strNames.deleteCharAt(strNames.lastIndexOf(","));
     strValues.deleteCharAt(strValues.lastIndexOf(","));
   }
   
-  private Set<String> getCurrentCols()
+  public ResultSet select(String entries, String constraint)
   {
-
-    Set<String> variables = new HashSet<String>();
+    String query = "";
+    try
+    {
+      Statement statement = conn.createStatement();
+      query = "SELECT " + entries + 
+          " FROM " + databaseTableName +
+          (StringUtils.isEmpty(constraint) ? "" : " WHERE " + constraint);
+      return statement.executeQuery(query);
+    } 
+    catch (SQLException e)
+    {
+      throw new RuntimeException("Problematic query: " + query + "\nDetails:\n" + e);
+    }
+  }
+  
+  private Set<String> _variables = null;
+  public Set<String> getCurrentCols()
+  {
+    if (_variables != null)
+      return _variables;
+    
+    _variables = new HashSet<String>();
 
     try
     {
       Statement statement = conn.createStatement();
       ResultSet res = statement.executeQuery("pragma table_info(run)");
       while( res.next())
-      {
-        variables.add(res.getString("name"));
-      }
+        _variables.add(res.getString("name"));
       res.close();
     } catch (SQLException e)
     {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
-    return variables;
-  }
-
-  
-  public void ensureInitalized() throws ClassNotFoundException
-  {
-    if (conn != null)
-      return;
-    connect();
+    return _variables;
   }
   
-  
-  public void connect() throws ClassNotFoundException
+  private Connection connect(File databaseFile)
   {
-    Class.forName("org.sqlite.JDBC");
     try
     {
-      conn = DriverManager.getConnection("jdbc:sqlite:/" + CONN_PATH + "/" + DB_NAME);
-    } catch (SQLException e)
+      Class.forName("org.sqlite.JDBC");
+      return DriverManager.getConnection("jdbc:sqlite:/" + databaseFile.getAbsolutePath());
+    } catch (Exception e)
     {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
   }
+
+  public File getDbFile()
+  {
+    return dbFile;
+  }
+
   
 }

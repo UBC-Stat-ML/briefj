@@ -60,14 +60,14 @@ public class RepositoryUtils
   private static CharSequence toString(VersionControlRepository repository)
   {
     StringBuilder result = new StringBuilder();
-    result.append("local\t" + repository.getLocalAddress() + "\n");
+    result.append("git_local\t" + repository.getLocalAddress() + "\n");
     int i = 0;
     for (String url : repository.getRemoteAddresses())
-      result.append("remote_" + (i++) + "\t" + url + "\n");
+      result.append("git_remote_" + (i++) + "\t" + url + "\n");
     String commitId = repository.getCommitIdentifier();
     if (commitId == null)
       commitId = "UNK (epoch=" + System.currentTimeMillis() + ")";
-    result.append("commit\t" + commitId + "\n");
+    result.append("git_commit\t" + commitId + "\n");
     return result.toString();
   }
 
@@ -90,22 +90,5 @@ public class RepositoryUtils
   {
     try { return new File(o.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath()); } 
     catch (Exception e) { throw new RuntimeException(e); }
-//    Class<?> c = o.getClass();
-//    ClassLoader loader = getClassLoader(o);
-//    if (loader != null) 
-//    {
-//      String name = c.getCanonicalName();
-//      URL resource = loader.getResource(name.replace(".", "/") + ".class");
-//      while (resource == null && name.contains("."))
-//      {
-//        name = name.replaceAll("[.][^.]*$", "");
-//        resource = loader.getResource(name.replace(".", "/") + ".class");
-//      }
-//      if ( resource != null ) {
-//        File result = new File(resource.toString().replace("file:", ""));
-//        if (result.exists())
-//          return result;
-//      }
-//    }
   }
 }

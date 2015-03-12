@@ -11,6 +11,7 @@ import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 import briefj.BriefLists;
 
@@ -34,10 +35,6 @@ public class GitRepository implements VersionControlRepository
   {
     try
     {
-      // the code below does not seem to work
-//        repository = builder.setGitDir(localFile)
-//          .findGitDir() // scan up the file system tree
-//          .build();
       File location = findGitRoot(localFile);
       Repository repository = new FileRepository(new File(location, ".git"));
       return new GitRepository(repository);
@@ -63,6 +60,30 @@ public class GitRepository implements VersionControlRepository
       return findGitRoot(location.getParentFile());
   }
 
+  /**
+   * 
+   * @param commitId
+   * @return Time of the given commitId (ms from the Epoch)
+   */
+  public long commitTime(String commitId)
+  {
+    try
+    {
+      Git git = new Git(repository);
+      
+      for (RevCommit commit : git.log().call())
+        if (commit.getId().name().equals(commitId.toLowerCase()))
+        {
+          long secs = commit.getCommitTime();
+          return secs * 1000L;
+        }
+      
+    } catch (Exception e)
+    {
+      throw new RuntimeException(e);
+    }
+    throw new RuntimeException();
+  }
 
   public GitRepository(Repository repository)
   {
@@ -126,8 +147,6 @@ public class GitRepository implements VersionControlRepository
       fileNames.addAll(status.getModified());
       fileNames.addAll(status.getRemoved());
       fileNames.addAll(status.getUntracked());
-      // this seems unecessary (if there is stuff in the folder, it will appear in above steps)
-//      fileNames.addAll(status.getUntrackedFolders());
       
       List<File> result = Lists.newArrayList();
       for (String fileName : BriefLists.sort(fileNames))

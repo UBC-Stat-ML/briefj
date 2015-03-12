@@ -3,6 +3,8 @@ package briefj.opt;
 import java.io.*;
 import java.util.*;
 
+import com.google.common.collect.Maps;
+
 
 /**
  * From: https://github.com/percyliang/fig
@@ -19,6 +21,16 @@ public class OrderedMap<S, T> {
   private ArrayList<S> keys = new ArrayList<S>();
   private Map<S, T> map     = new HashMap<S, T>();
 
+  public LinkedHashMap<S, T> asLinkedHashMap()
+  {
+    LinkedHashMap<S,T> result = Maps.newLinkedHashMap();
+    
+    for (S key : keys)
+      result.put(key, get(key));
+    
+    return result;
+  }
+  
   public OrderedMap() { }
   public OrderedMap(OrderedMap<S, T> map) {
     for(S key : map.keys())

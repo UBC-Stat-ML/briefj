@@ -1,7 +1,6 @@
 package briefj.run;
 
 import java.io.File;
-import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,20 +13,28 @@ import briefj.BriefStrings;
 /**
  * Manages a pool of experimental results.
  * 
+ * The main responsibility of this class is to provide a directory
+ * unique to this process when getResultFolder() is called. This folder
+ * is called the result folder.
+ * 
+ * The common behavior is that the directory 'results/all' will 
+ * be created, in which a subdirectory with a unique name and the suffix
+ * '.exec'.
+ * 
+ * This behavior can be overwritten by defining the environment variable
+ * SPECIFIED_RESULT_FOLDER. This is used when for example one job is
+ * responsible for launching sub-job into a remote server.
+ * 
  * @author Alexandre Bouchard (alexandre.bouchard@gmail.com)
  *
  */
 public class Results
 {
-  private static final Object SPECIFIED_RESULT_FOLDER = "SPECIFIED_RESULT_FOLDER";
+  private static final String SPECIFIED_RESULT_FOLDER = "SPECIFIED_RESULT_FOLDER";
 
   /**
    * Main point of entry: this will return a directory unique
-   * to this execution.
-   * 
-   * Located in experiments/all/[date]-[unique-id].exec/
-   * 
-   * A shortcut for the latest execution is also updated in experiments/latest/
+   * to this process.
    * 
    * @return
    */
@@ -36,37 +43,30 @@ public class Results
     if (resultFolder != null)
       return resultFolder;
     // check if the working dir is already a result folder
-    if (isWorkingDirectoryAResultFolder())
-      resultFolder = new File(".");
-    else
+    synchronized (SPECIFIED_RESULT_FOLDER)
+    {
+      if (resultFolder != null)
+        return resultFolder;
       resultFolder = initResultFolder();
-    return resultFolder;
-    
+      return resultFolder;
+    }
   }
   
+  /**
+   * Syntactic sugar for new File(getResultFolder(), fileName);
+   * @param fileName
+   * @return
+   */
   public static File getFileInResultFolder(String fileName)
   {
     return new File(getResultFolder(), fileName);
   }
   
   private static File resultFolder = null;
-  
-  private static File initResultFolder()
-  {
-    // get results pool folder
-    File poolFolder = getPoolFolder();
-    
-    // create a new
-    File result = createResultFolder(poolFolder);
-    
-    // refresh recent softlinks
-    refreshSoftlinks(poolFolder, result);
-    
-    return result;
-  }
 
-  private static void refreshSoftlinks(File poolFolder, File result)
+  private static void refreshSoftlinks(File result)
   {
+    File poolFolder = result.getParentFile().getParentFile(); // up one is 'all', up two is 'results'
     final String latestString = "latest";
     File latestFolderSoftLink = new File(poolFolder, latestString);
     if (latestFolderSoftLink.exists())
@@ -81,9 +81,10 @@ public class Results
     return BriefStrings.currentDataString() + "-" + BriefStrings.generateUniqueId() + ".exec";
   }
 
-  private static File createResultFolder(File poolFolder)
+  private static File initResultFolder()
   {
-    // if something was specified by an env variable, use that
+    // if set by an env variable, use that
+    // in this case, do not refresh soft links, as the directory structure could be different
     String fromEnvironment = System.getenv().get(SPECIFIED_RESULT_FOLDER);
     if (!StringUtils.isEmpty(fromEnvironment))
     {
@@ -92,83 +93,55 @@ public class Results
       result.mkdir();
       return result;
     }
-    
-    // otherwise, create a new one
-    String name = nextRandomResultFolderName(); //getMainClassString() + "-" + BriefStrings.generateUniqueId() + ".exec";
-    File allResults = new File(poolFolder, "all");
-    allResults.mkdir();
-    File result = new File(allResults, name);
-    result.mkdir();
-    new File(result, resultFolderMark).mkdir();
-    
-    return result;
-  }
-
-  public static File getPoolFolder()
-  {
-    File resultsFolder = new File("results");
-    
-    if (!resultsFolder.exists())
-      resultsFolder.mkdir();
-    if (!resultsFolder.isDirectory())
-      throw new RuntimeException();
-    
-    return resultsFolder;
-  }
-
-  private static boolean isWorkingDirectoryAResultFolder()
-  {
-    return (new File(resultFolderMark).exists());
-  }
-  
-  private static String resultFolderMark = ".resultFolderMetadata";
-  
-  public static String getMainClassString()
-  {
-    try
+    else
     {
-      Class<?> mainClass = getMainClass();
-      return mainClass.getCanonicalName();
-    }
-    catch (Exception e)
-    {
-      return "unknownClass";
+      // otherwise, create a new one
+      String name = nextRandomResultFolderName(); //getMainClassString() + "-" + BriefStrings.generateUniqueId() + ".exec";
+      
+      if (!poolFolder.exists())
+        poolFolder.mkdir();
+      if (!poolFolder.isDirectory())
+        throw new RuntimeException();
+      
+      File allResults = new File(poolFolder, "all");
+      
+      allResults.mkdir();
+      File result = new File(allResults, name);
+      result.mkdir();
+      
+      // refresh recent softlinks
+      refreshSoftlinks(result);
+      
+      return result;
     }
   }
   
-  private static Class<?> mainClass;
-  public static Class<?> getMainClass() 
-  {
-    if (mainClass != null)
-      return mainClass;
+  public static String DEFAULT_ALL_NAME = "all";
+  public static String DEFAULT_POOL_NAME = "results";
+  private static File poolFolder = new File(DEFAULT_POOL_NAME);
 
-    Collection<StackTraceElement[]> stacks = Thread.getAllStackTraces().values();
-    for (StackTraceElement[] currStack : stacks) 
-    {
-      if (currStack.length==0)
-        continue;
-      StackTraceElement lastElem = currStack[currStack.length - 1];
-      if (lastElem.getMethodName().equals("main")) 
-      {
-        try 
-        {
-          String mainClassName = lastElem.getClassName();
-          mainClass = Class.forName(mainClassName);
-          return mainClass;
-        } 
-        catch (ClassNotFoundException e) 
-        {
-          throw new RuntimeException();
-        }
-      }
-    }
-    throw new RuntimeException();
-  }
-
+  /**
+   * Create a subdirectory in the result folder and return 
+   * a pointer to that subdirectory.
+   * @param string
+   * @return
+   */
   public static File getFolderInResultFolder(String string)
   {
     File result = getFileInResultFolder(string);
     result.mkdirs();
     return result;
+  }
+
+  /**
+   * Set a directory where 'all' and 'latest' will be created in.
+   * Default is ./results
+   * @param poolFolder
+   */
+  public static void setResultsFolder(File poolFolder)
+  {
+    if (resultFolder != null)
+      throw new RuntimeException("Cannot set the pool after the result folder created (it is too late)");
+    Results.poolFolder = poolFolder;
   }
 }

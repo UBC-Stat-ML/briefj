@@ -61,10 +61,10 @@ public class Mains
         // start job
         mainClass.run();
       }
-      catch (Exception e)
+      catch (RuntimeException e)
       {
-        System.err.println(ExceptionUtils.getStackTrace(e));
         write(getFile(EXCEPTION_FILE), ExceptionUtils.getStackTrace(e));
+        throw e;
       }
       
     // record end time
@@ -74,7 +74,6 @@ public class Mains
     
     System.out.println("executionMilliseconds : " + (endTime - startTime));
     System.out.println("outputFolder : " + Results.getResultFolder().getAbsolutePath());
-      
     
     if (tees != null)
       tees.close();
@@ -82,10 +81,7 @@ public class Mains
     outputMap.printEasy(getFile(OUT_MAP));
     
     if(System.getenv().get("CONN_PATH") != null)
-    {
-      Records rec = new Records(optsRead.options, outputMap, Results.getResultFolder().toString());
-      rec.recordFullRun();  
-    }
+      Records.recordsFromEnvironmentVariable().recordFullRun(optsRead.options.asLinkedHashMap(), outputMap.asLinkedHashMap(), Results.getResultFolder());
   }
 
   private static void recordTransientInfo(String[] args, Runnable mainClass, long startTime)

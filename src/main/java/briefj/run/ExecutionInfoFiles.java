@@ -7,9 +7,11 @@ import java.io.File;
 
 public class ExecutionInfoFiles
 {
+  public static final String infoFileDirectoryName = "executionInfo";
+  
   public static File getExecutionInfoFolder()
   {
-    File result = Results.getFileInResultFolder("executionInfo");
+    File result = Results.getFileInResultFolder(infoFileDirectoryName);
     result.mkdir();
     return result;
   }
@@ -19,6 +21,12 @@ public class ExecutionInfoFiles
     File result = new File(getExecutionInfoFolder(), fileName);
     result.getParentFile().mkdir();
     return result;
+  }
+  
+  public static File getFile(String fileName, File execFolder)
+  {
+    File infoFileDirectory = new File(execFolder, infoFileDirectoryName);
+    return new File(infoFileDirectory, fileName);
   }
   
   public static final String OPTIONS_MAP = "options.map";

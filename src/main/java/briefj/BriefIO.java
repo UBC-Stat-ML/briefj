@@ -20,10 +20,10 @@ import java.util.NoSuchElementException;
 
 import au.com.bytecode.opencsv.CSVParser;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
@@ -89,8 +89,6 @@ public class BriefIO
   
   /**
    * 
-   * @param str
-   * @return
    * 
    * Note: to make work in eclipse, add resources folder in Run config/classpath/user entry/advanced/folder
    * Actually, does not seem needed as long as resource folder properly included in the build path
@@ -173,7 +171,7 @@ public class BriefIO
         final int size = keys.size();
         if (size != values.size())
           throw new RuntimeException("The number of keys should have the same length as the number of values.");
-        Map<String,String> result = Maps.newHashMap();
+        Map<String,String> result = Maps.newLinkedHashMap();
         for (int i = 0; i < size; i++)
           result.put(keys.get(i), values.get(i));
         return result;
@@ -330,5 +328,5 @@ public class BriefIO
   {
     return prompt(null);
   }
-
+  
 }

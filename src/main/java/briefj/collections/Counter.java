@@ -53,7 +53,7 @@ public class Counter<E> implements Serializable, Iterable<E> {
 
 	/**
 	 * True if there are no entries in the counter (false does not mean
-	 * totalCount > 0)
+	 * totalCount greater than 0)
 	 */
 	public boolean isEmpty() {
 		return size() == 0;

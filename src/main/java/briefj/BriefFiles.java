@@ -18,15 +18,19 @@ public class BriefFiles
   /**
    * list, filtering with the given suffix (case unsensitive) and sort by name
    * @param basePath
-   * @param suffixFilter
    * @return
-   * @throws FileNotFoundException
    */
   public static List<File> ls(final File basePath) 
   {
     return BriefFiles.ls(basePath, "");
   }
 
+  /**
+   * 
+   * @param basePath
+   * @param suffixFilter Do NOT include the period
+   * @return The files under the basePath that match the filter, sorted by name.
+   */
   public static List<File> ls(final File basePath, final String suffixFilter) 
   {
     final FilenameFilter filter = (suffixFilter == null || suffixFilter.equals("") ?

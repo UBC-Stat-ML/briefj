@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * From: https://github.com/percyliang/fig
@@ -619,6 +621,45 @@ public class OptionsParser {
     }
 
     return options;
+  }
+  
+  /**
+   * Parse the options file
+   * @param file
+   * @return
+   */
+  public static LinkedHashMap<String,String> readOptionsFile(File file)
+  {
+    // TODO: warning, code duplication with readOptionsFile(), which is tangled
+    LinkedHashMap<String,String> result = Maps.newLinkedHashMap();
+
+    try {
+      //OrderedStringMap map = OrderedStringMap.fromFile(file);
+      // {12/06/08}: Allow spaces
+
+      BufferedReader in = IOUtils.openIn(file);
+      String line;
+      while((line = in.readLine()) != null) {
+        line = line.trim();
+        if(line.length() == 0 || line.startsWith("#")) continue;
+        String[] tokens = line.split("\\s+", 2);
+        String key = tokens[0];
+        String val = (tokens.length > 1 ? tokens[1] : "");
+
+
+        if(key.startsWith("+")) { throw new RuntimeException("Unsupported options.map feature"); }
+
+        if(key.equals("!include")) { // Include other file
+          throw new RuntimeException("Unsupported options.map feature");
+        }
+        else {
+          result.put(key, val);
+        }
+      }
+    } catch(IOException e) {
+      throw new RuntimeException(e);
+    }
+    return result;
   }
 
   // Options file: one option per line
