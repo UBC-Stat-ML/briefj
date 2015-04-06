@@ -1,6 +1,7 @@
 package briefj;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,5 +38,9 @@ public class BriefMaps
   public static <K,V> List<V> getOrPutList(Map<K,List<V>> map, K key)
   {
     return getOrPut(map, key, new ArrayList<V>());
+  }
+  public static <K,K2,V> Map<K2,V> getOrPutMap(Map<K,Map<K2,V>> map, K key)
+  {
+    return getOrPut(map, key, new LinkedHashMap<K2,V>());
   }
 }

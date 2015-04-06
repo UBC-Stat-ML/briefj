@@ -5,7 +5,7 @@ apply plugin: 'maven'
 uploadArchives {
   repositories.mavenDeployer {
     repository(url: "file:///Users/bouchard/Documents/web/public_html/maven/")
-    pom.version = "2.4.7"
+    pom.version = "2.4.8"
     pom.artifactId = "briefj"
     pom.groupId = "ca.ubc.stat"
   }
@@ -91,5 +91,6 @@ buildscript {
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.5-beta-1'
   }
 }
+
 
 

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+
 /**
  * A map from objects to doubles. Includes convenience methods for getting,
  * setting, and incrementing element counts. Objects not in the counter will
@@ -277,21 +278,6 @@ public class Counter<E> implements Serializable, Iterable<E> {
 	public Counter(Collection<? extends E> collection) {
 		this();
 		incrementAll(collection, 1.0);
-	}
-
-	public static void main(String[] args) {
-		Counter<String> counter = new Counter<String>();
-		System.out.println(counter);
-		counter.incrementCount("planets", 7);
-		System.out.println(counter);
-		counter.incrementCount("planets", 1);
-		System.out.println(counter);
-		counter.setCount("suns", 1);
-		System.out.println(counter);
-		counter.setCount("aliens", 0);
-		System.out.println(counter);
-		System.out.println(counter.toString(2));
-		System.out.println("Total: " + counter.totalCount());
 	}
 
 }
