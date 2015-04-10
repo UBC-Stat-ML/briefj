@@ -5,7 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import org.apache.tools.ant.util.TeeOutputStream;
+import org.apache.commons.io.output.TeeOutputStream;
+
 
 
 

@@ -103,7 +103,7 @@ public final class Indexer<T> implements Serializable
    * Add all the items one after the other in this indexer.
    * @param os
    */
-  public void addToIndex(T... os)
+  public void addToIndex(@SuppressWarnings("unchecked") T... os)
   {
     addAllToIndex(Arrays.asList(os));
   }

@@ -6,7 +6,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 
 
 
@@ -36,5 +39,17 @@ public class BriefLists
   public static <T> T last(List<T> list)
   {
     return list.get(list.size() - 1);
+  }
+  
+  /**
+   * 
+   * @param bound
+   * @return The integers [0, 1, 2, ... bound)
+   */
+  public static ContiguousSet<Integer> integers(int bound)
+  {
+    if (bound < 0)
+      throw new RuntimeException("The bound should be non-negative");
+    return ContiguousSet.create(Range.closedOpen(0, bound), DiscreteDomain.integers());
   }
 }

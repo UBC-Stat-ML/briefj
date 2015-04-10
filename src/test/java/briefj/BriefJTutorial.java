@@ -81,5 +81,11 @@ public class BriefJTutorial //implements Runnable
    */
   @Tutorial(showSource = false, nextStep = ResultsTutorial.class)
   public static void results() {}
-
+  
+  
+  /**
+   * 
+   */
+  @Tutorial(showSource = false, nextStep = BriefParallelTutorial.class)
+  public static void par() {}
 }
