@@ -170,7 +170,7 @@ public class BriefIO
       {
         final int size = keys.size();
         if (size != values.size())
-          throw new RuntimeException("The number of keys should have the same length as the number of values.");
+          throw new RuntimeException("The number of keys should have the same length as the number of values:" + size + " vs " + values.size());
         Map<String,String> result = Maps.newLinkedHashMap();
         for (int i = 0; i < size; i++)
           result.put(keys.get(i), values.get(i));
@@ -225,25 +225,47 @@ public class BriefIO
     
     public FluentIterable<List<String>> splitCSV()
     {
-      return splitCSV(new CSVParser());
+      return splitCSV(new CSVParser(), null);
     }
     public FluentIterable<List<String>> splitCSV(CSVParser parser)
     {
-      return transform(BriefIO.splitCSV(parser));
+      return splitCSV(parser,null);
+    }
+    public FluentIterable<List<String>> splitCSV(final Character commentCharacter)
+    {
+      return splitCSV(new CSVParser(), commentCharacter);
+    }
+    public FluentIterable<List<String>> splitCSV(CSVParser parser, final Character commentCharacter)
+    {
+      if (commentCharacter == null)
+        return filter(s -> !s.matches("^\\s*$")).transform(BriefIO.splitCSV(parser));
+      else
+      {
+        final char c = commentCharacter.charValue();
+        return filter(s -> !s.matches("^\\s*$")).filter(s -> s.length() == 0 || s.charAt(0) != c).transform(BriefIO.splitCSV(parser));
+      }
     }
     
     public FluentIterable<Map<String,String>> indexCSV()
     { 
-      return indexCSV(new CSVParser());
+      return indexCSV(new CSVParser(), null);
     }
     public FluentIterable<Map<String,String>> indexCSV(CSVParser parser)
     {
+      return indexCSV(parser, null);
+    }
+    public FluentIterable<Map<String,String>> indexCSV(Character commentCharacter)
+    {
+      return indexCSV(new CSVParser(), commentCharacter);
+    }
+    public FluentIterable<Map<String,String>> indexCSV(CSVParser parser, Character commentCharacter)
+    {
       // read the first line, by default, zero columns (to support fully empty file)
       @SuppressWarnings("unchecked")
-      final List<String> header = Iterables.getFirst(splitCSV(parser), Collections.EMPTY_LIST);
+      final List<String> header = Iterables.getFirst(splitCSV(parser, commentCharacter), Collections.EMPTY_LIST);
       
       // for the body, skip the header:
-      FluentIterable<List<String>> bodyIterable = splitCSV(parser).skip(1);
+      FluentIterable<List<String>> bodyIterable = splitCSV(parser, commentCharacter).skip(1);
       
       return bodyIterable.transform(listToMap(header));
     }

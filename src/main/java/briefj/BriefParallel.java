@@ -11,12 +11,25 @@ import com.google.common.collect.ContiguousSet;
 
 public class BriefParallel
 {
+  /**
+   * Call the provided operation's accept(int i) function for all integers i from [0, numberOfTasks)
+   * using numberOfThreads parallel threads. 
+   * 
+   * Returns once all the tasks are done.
+   * 
+   * If one of the threads encounters an exception, the main thread will throw this exception as 
+   * well.
+   * 
+   * @param numberOfTasks
+   * @param numberOfThreads
+   * @param operation
+   */
   public static void process(int numberOfTasks, final int numberOfThreads, final Consumer<Integer> operation) 
   {
-    ContiguousSet<Integer> taskIndices = BriefLists.integers(numberOfTasks);
-    
     if (numberOfThreads < 1)
       throw new RuntimeException("Number of threads cannot be negative");
+    
+    ContiguousSet<Integer> taskIndices = BriefLists.integers(numberOfTasks);
     
     if (numberOfThreads == 1)
     {
@@ -26,6 +39,7 @@ public class BriefParallel
     }
     
     final ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
+    // Mutable reference used to inform the main thread of a potential exception
     final Throwable [] exception = new Throwable[1];
 
     for (final int taskIndex : taskIndices)
@@ -58,4 +72,5 @@ public class BriefParallel
       throw new RuntimeException(exception[0]);
   }
 
+  private BriefParallel() {}
 }

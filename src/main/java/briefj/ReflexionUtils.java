@@ -15,7 +15,6 @@ public class ReflexionUtils
   /*
    * Note: At some point, look at: https://github.com/EsotericSoftware/reflectasm
    */
-
   
   /**
    * Retrieving fields list of specified class
