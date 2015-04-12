@@ -5,7 +5,7 @@ apply plugin: 'maven'
 uploadArchives {
   repositories.mavenDeployer {
     repository(url: "file:///Users/bouchard/Documents/web/public_html/maven/")
-    pom.version = "2.4.9"
+    pom.version = "2.4.10"
     pom.artifactId = "briefj"
     pom.groupId = "ca.ubc.stat"
   }
@@ -67,11 +67,14 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
-	allprojects {
-  	tasks.withType(Javadoc) {
-		  options.addStringOption('Xdoclint:none', '-quiet')
+    allprojects {
+        //noinspection SpellCheckingInspection
+        tasks.withType(Javadoc) {
+            // disable the crazy super-strict doclint tool in Java 8
+            //noinspection SpellCheckingInspection
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
     }
-  }
 }
 
 artifacts {
