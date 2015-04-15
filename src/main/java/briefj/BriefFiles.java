@@ -70,14 +70,18 @@ public class BriefFiles
       }
     };
   }
-
+  
   public static File createTempFile()
+  {
+    return createTempFile("temp");
+  }
+
+  public static File createTempFile(String suffix)
   {
     File result;
     try
     {
-      result = File.createTempFile("Briefj-" + System.currentTimeMillis(), ".temp");
-      result.deleteOnExit();
+      result = File.createTempFile("Briefj-" + System.currentTimeMillis(), "." + suffix);
       return result;
     } catch (IOException e)
     {
