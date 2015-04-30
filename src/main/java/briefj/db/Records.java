@@ -128,6 +128,8 @@ public class Records
           result.append("_");
         result.append(Character.toLowerCase(current));
       }
+      else if (i > 0 && (current >= '0' && current <= '9'))
+          result.append(current);
       else
         result.append("_");
     }
