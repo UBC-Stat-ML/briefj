@@ -165,18 +165,11 @@ public class Records
     LinkedHashMap<String,String> keyValuePairs = cleanColumnNames(_keyValuePairs);
     Set<String> variables = getCurrentCols();
     
-    int nRecorded = variables.size();
-    int n2Input = keyValuePairs.size() + 2;
-    
-    if (nRecorded != n2Input)
-    {
-      Set<String> addCols = Sets.newHashSet(keyValuePairs.keySet());
-      addCols.removeAll(variables);
+    Set<String> addCols = Sets.newHashSet(keyValuePairs.keySet());
+    addCols.removeAll(variables);
       
-      for(String newCol : addCols)
+    for(String newCol : addCols)
         alterTable(newCol);
-
-    }   
     
     StringBuilder colNames = new StringBuilder();
     StringBuilder values = new StringBuilder();
