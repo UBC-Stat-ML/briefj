@@ -145,9 +145,6 @@ public class BriefIO
     }
   }
   
-
-
-  
   public static final Function<String, List<String>> splitCSV = splitCSV(new CSVParser());
   public static Function<String, List<String>> splitCSV(final CSVParser parser) 
   {
@@ -156,7 +153,7 @@ public class BriefIO
       public List<String> apply(String input)
       {
         try { return Arrays.asList(parser.parseLine(input)); } 
-        catch (IOException e) { throw new RuntimeException(e); }
+        catch (IOException e) { throw new RuntimeException(e + "\nProblematic line:" + input); }
       }
     };
   }

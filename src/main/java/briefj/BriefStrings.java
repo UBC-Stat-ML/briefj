@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -80,5 +82,22 @@ public class BriefStrings
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
     Date today = Calendar.getInstance().getTime();        
     return df.format(today);
+  }
+  
+  public static String replaceMatches(Pattern regex, String originalString, Function<MatchResult, String> replacementFunction)
+  {
+    StringBuilder result = new StringBuilder();
+    final Matcher matcher = regex.matcher(originalString);
+    int lastEndPt = 0;
+    while (matcher.find())
+    {
+      final MatchResult matchResult = matcher.toMatchResult();
+      final String replacement = replacementFunction.apply(matchResult);
+      result.append(originalString.substring(lastEndPt, matchResult.start()));
+      result.append(replacement);
+      lastEndPt = matchResult.end();
+    }
+    result.append(originalString.substring(lastEndPt, originalString.length()));
+    return result.toString();
   }
 }
