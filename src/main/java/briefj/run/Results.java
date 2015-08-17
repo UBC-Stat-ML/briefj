@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import binc.Command;
 import briefj.BriefFiles;
 import briefj.BriefStrings;
+import briefj.OutputManager;
 
 
 
@@ -60,6 +61,17 @@ public class Results
   public static File getFileInResultFolder(String fileName)
   {
     return new File(getResultFolder(), fileName);
+  }
+  
+  private static OutputManager globalOutputManager = null;
+  public static OutputManager getGlobalOutputManager()
+  {
+    if (globalOutputManager == null)
+    {
+      globalOutputManager = new OutputManager();
+      globalOutputManager.setOutputFolder(getResultFolder());
+    }
+    return globalOutputManager;
   }
   
   private static File resultFolder = null;
