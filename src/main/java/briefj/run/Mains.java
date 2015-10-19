@@ -1,21 +1,10 @@
 package briefj.run;
 
 import static briefj.BriefIO.write;
-import static briefj.run.ExecutionInfoFiles.CLASSPATH_INFO;
-import static briefj.run.ExecutionInfoFiles.DIRTY_FILE_RANDOM_HASH;
-import static briefj.run.ExecutionInfoFiles.END_TIME_FILE;
-import static briefj.run.ExecutionInfoFiles.EXCEPTION_FILE;
-import static briefj.run.ExecutionInfoFiles.GLOBAL_HASH;
-import static briefj.run.ExecutionInfoFiles.HOST_INFO_FILE;
-import static briefj.run.ExecutionInfoFiles.INPUT_LINKS_FOLDER;
-import static briefj.run.ExecutionInfoFiles.OPTIONS_MAP;
-import static briefj.run.ExecutionInfoFiles.REPOSITORY_INFO;
-import static briefj.run.ExecutionInfoFiles.START_TIME_FILE;
-import static briefj.run.ExecutionInfoFiles.STD_OUT_FILE;
-import static briefj.run.ExecutionInfoFiles.OUT_MAP;
-import static briefj.run.ExecutionInfoFiles.exists;
-import static briefj.run.ExecutionInfoFiles.getExecutionInfoFolder;
-import static briefj.run.ExecutionInfoFiles.getFile;
+import static briefj.run.ExecutionInfoFiles.*;
+
+import java.lang.management.ManagementFactory;
+import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -26,6 +15,7 @@ import briefj.opt.OrderedStringMap;
 import briefj.repo.RepositoryUtils;
 import briefj.run.RedirectionUtils.Tees;
 
+import com.google.common.base.Joiner;
 import com.google.common.hash.HashCode;
 
 
@@ -38,7 +28,8 @@ public class Mains
    * 
    * 
    * Note that we check for existence of each file in case this is being 
-   * called within a larger context that already created these files.
+   * called within a larger context that already created these files (so
+   * it is not necessary to perform these checks for some java-specific options).
    * 
    * @param args
    * @param mainClass
@@ -126,6 +117,28 @@ public class Mains
    */
   private static RecordPermanentStateResults recordPermanentState(String[] args, Runnable mainClass)
   {
+    // record main class
+    write(
+      getFile(MAIN_CLASS_FILE),
+      mainClass.getClass().toGenericString());
+      
+    // record JVM options
+    List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+    write(
+      getFile(JVM_OPTIONS),
+      Joiner.on(" ").join(arguments));
+      
+    // record pwd
+    if (!exists(WORKING_DIR))
+      write(
+        getFile(WORKING_DIR),
+        System.getProperty("user.dir"));
+    
+    // record raw arguments
+    write(
+      getFile(JAVA_ARGUMENTS),
+      Joiner.on(" ").join(args));
+    
     // record command line options
     OptionsParser parser;
     try 
@@ -141,17 +154,17 @@ public class Mains
     
     try
     {
-        if (!exists(REPOSITORY_INFO))
-            if (!RepositoryUtils.recordCodeVersion(mainClass))
-                // if there were dirty file (i.e. not in version control) write a random string to avoid collisions
-                write(
-                        getFile(DIRTY_FILE_RANDOM_HASH), 
-                        HashUtils.HASH_FUNCTION.hashUnencodedChars(BriefStrings.generateUniqueId()).toString());
+      if (!exists(REPOSITORY_INFO))
+        if (!RepositoryUtils.recordCodeVersion(mainClass))
+          // if there were dirty file (i.e. not in version control) write a random string to avoid collisions
+          write(
+            getFile(DIRTY_FILE_RANDOM_HASH), 
+            HashUtils.HASH_FUNCTION.hashUnencodedChars(BriefStrings.generateUniqueId()).toString());
     }
     catch (RuntimeException e)
     {
-        System.err.println("WARNING: Bare Repository has neither a working tree, nor an index.");
-        write(getFile(EXCEPTION_FILE), ExceptionUtils.getStackTrace(e));
+      System.err.println("WARNING: Bare Repository has neither a working tree, nor an index.");
+      write(getFile(EXCEPTION_FILE), ExceptionUtils.getStackTrace(e));
     }
 
     if (!exists(CLASSPATH_INFO))
@@ -164,8 +177,8 @@ public class Mains
       if (!success)
         // if there were missing input file, write a random string to avoid collisions
         write(
-            getFile(DIRTY_FILE_RANDOM_HASH), 
-            HashUtils.HASH_FUNCTION.hashUnencodedChars(BriefStrings.generateUniqueId()).toString());
+          getFile(DIRTY_FILE_RANDOM_HASH), 
+          HashUtils.HASH_FUNCTION.hashUnencodedChars(BriefStrings.generateUniqueId()).toString());
     }
     
     // global hash code of the execution inputs, repository, etc
@@ -184,8 +197,4 @@ public class Mains
   }
   
   private static OrderedStringMap outputMap = new OrderedStringMap();
-  
-
-  
-  
 }

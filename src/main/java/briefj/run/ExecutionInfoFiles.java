@@ -40,13 +40,17 @@ public class ExecutionInfoFiles
   public static final String START_TIME_FILE = "start-time.txt";
   public static final String END_TIME_FILE = "end-time.txt";
   
+  public static final String MAIN_CLASS_FILE = "main-class.txt";
+  public static final String JVM_OPTIONS = "jvm-options.txt";
+  public static final String CLASSPATH_INFO = "code/classpath.txt";
   public static final String EXCEPTION_FILE = "exception-message.txt";
+  public static final String JAVA_ARGUMENTS = "java-arguments.txt";
   
   public static final String REPOSITORY_DIRTY_FILES = "code/dirty-files.txt";
   public static final String REPOSITORY_INFO = "code/info.map";
   public static final String REPOSITORY_CLONE_SCRIPT = "code/clone-script.sh";
   
-  public static final String CLASSPATH_INFO = "code/classpath.txt";
+  public static final String WORKING_DIR = "working-dir.txt";
   
   public static final String HOST_INFO_FILE = "host-info.map";
   

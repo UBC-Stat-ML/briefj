@@ -9,6 +9,7 @@ public class OptionsUtils
   public static void recordOptions(OptionsParser parser)
   {
     parser.getOptionPairs().printEasy(getFile(OPTIONS_MAP)); 
+    parser.getOptionPairs().printEasy(getFile(OPTIONS_MAP + ".txt")); 
     parser.getOptionStrings().printEasy(getFile(OPTIONS_DESCRIPTIONS)); 
   }
 
