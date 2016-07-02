@@ -31,16 +31,41 @@ public class BriefMaps
     }
     return result;
   }
+  
   public static <K,V> Set<V> getOrPutSet(Map<K,Set<V>> map, K key)
   {
-    return getOrPut(map, key, new LinkedHashSet<V>());
+    // return getOrPut(map, key, new LinkedHashSet<V>());
+    // specialized method below a bit repetitive but more efficient
+    Set<V> result = map.get(key);
+    if (result == null)
+    {
+      result = new LinkedHashSet<V>();
+      map.put(key, result);
+    }
+    return result;
   }
   public static <K,V> List<V> getOrPutList(Map<K,List<V>> map, K key)
   {
-    return getOrPut(map, key, new ArrayList<V>());
+    // return getOrPut(map, key, new ArrayList<V>());
+    // specialized method below a bit repetitive but more efficient
+    List<V> result = map.get(key);
+    if (result == null)
+    {
+      result = new ArrayList<V>();
+      map.put(key, result);
+    }
+    return result;
   }
   public static <K,K2,V> Map<K2,V> getOrPutMap(Map<K,Map<K2,V>> map, K key)
   {
-    return getOrPut(map, key, new LinkedHashMap<K2,V>());
+    // return getOrPut(map, key, new LinkedHashMap<K2,V>());
+    // specialized method below a bit repetitive but more efficient
+    Map<K2,V> result = map.get(key);
+    if (result == null)
+    {
+      result = new LinkedHashMap<K2,V>();
+      map.put(key, result);
+    }
+    return result;
   }
 }
