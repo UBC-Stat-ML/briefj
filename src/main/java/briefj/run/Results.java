@@ -109,6 +109,7 @@ public class Results
       File result = new File(fromEnvironment);
       BriefFiles.createParentDirs(result);
       result.mkdir();
+      resultFolder = result;
       return result;
     }
     else
@@ -130,6 +131,7 @@ public class Results
       // refresh recent softlinks
       refreshSoftlinks(result);
       
+      resultFolder = result;
       return result;
     }
   }
