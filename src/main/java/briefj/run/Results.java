@@ -92,12 +92,18 @@ public class Results
   {
     return BriefStrings.currentDataString() + "-" + BriefStrings.generateUniqueId() + ".exec";
   }
+  
+  public static File initResultFolder()
+  {
+    String fromEnvironment = System.getenv().get(SPECIFIED_RESULT_FOLDER);
+    return initResultFolder(fromEnvironment);
+  }
 
-  private static File initResultFolder()
+  public static File initResultFolder(String fromEnvironment)
   {
     // if set by an env variable, use that
     // in this case, do not refresh soft links, as the directory structure could be different
-    String fromEnvironment = System.getenv().get(SPECIFIED_RESULT_FOLDER);
+    
     if (!StringUtils.isEmpty(fromEnvironment))
     {
       File result = new File(fromEnvironment);
