@@ -1,10 +1,12 @@
 package briefj.run;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
 
-import binc.Command;
 import briefj.BriefFiles;
 import briefj.BriefStrings;
 import briefj.OutputManager;
@@ -31,7 +33,10 @@ import briefj.OutputManager;
  */
 public class Results
 {
-  private static final String SPECIFIED_RESULT_FOLDER = "SPECIFIED_RESULT_FOLDER";
+  public static final String SPECIFIED_RESULT_FOLDER = "SPECIFIED_RESULT_FOLDER";
+  public static final String LATEST_STRING = "latest";
+  public static String DEFAULT_ALL_NAME = "all";
+  public static String DEFAULT_POOL_NAME = "results";
 
   /**
    * Main point of entry: this will return a directory unique
@@ -75,17 +80,15 @@ public class Results
   }
   
   private static File resultFolder = null;
-
+  
   private static void refreshSoftlinks(File result)
   {
     File poolFolder = result.getParentFile().getParentFile(); // up one is 'all', up two is 'results'
-    final String latestString = "latest";
-    File latestFolderSoftLink = new File(poolFolder, latestString);
-    if (latestFolderSoftLink.exists())
-      latestFolderSoftLink.delete();
     
-    try { Command.call(Command.cmd("ln").withArgs("-s").appendArg(result.getAbsolutePath()).appendArg(latestFolderSoftLink.toString())); }
-    catch (Exception e) {}
+    File latestFolderSoftLink = new File(poolFolder, LATEST_STRING);
+    latestFolderSoftLink.delete();
+    try { Files.createSymbolicLink(latestFolderSoftLink.toPath(), Paths.get(DEFAULT_POOL_NAME).relativize(result.toPath())); } 
+    catch (IOException e) {}
   }
   
   public static String nextRandomResultFolderName()
@@ -122,7 +125,7 @@ public class Results
       if (!poolFolder.isDirectory())
         throw new RuntimeException();
       
-      File allResults = new File(poolFolder, "all");
+      File allResults = new File(poolFolder, DEFAULT_ALL_NAME);
       
       allResults.mkdir();
       File result = new File(allResults, name);
@@ -136,8 +139,6 @@ public class Results
     }
   }
   
-  public static String DEFAULT_ALL_NAME = "all";
-  public static String DEFAULT_POOL_NAME = "results";
   private static File poolFolder = new File(DEFAULT_POOL_NAME);
 
   /**
