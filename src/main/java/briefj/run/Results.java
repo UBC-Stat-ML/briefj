@@ -53,8 +53,7 @@ public class Results
     {
       if (resultFolder != null)
         return resultFolder;
-      resultFolder = initResultFolder();
-      return resultFolder;
+      return initResultFolder();
     }
   }
   
@@ -98,18 +97,17 @@ public class Results
   
   public static File initResultFolder()
   {
+    // if set by an env variable, use that
+    // in this case, do not refresh soft links, as the directory structure could be different
     String fromEnvironment = System.getenv().get(SPECIFIED_RESULT_FOLDER);
     return initResultFolder(fromEnvironment);
   }
 
-  public static File initResultFolder(String fromEnvironment)
+  public static File initResultFolder(String specified)
   {
-    // if set by an env variable, use that
-    // in this case, do not refresh soft links, as the directory structure could be different
-    
-    if (!StringUtils.isEmpty(fromEnvironment))
+    if (!StringUtils.isEmpty(specified))
     {
-      File result = new File(fromEnvironment);
+      File result = new File(specified);
       BriefFiles.createParentDirs(result);
       result.mkdir();
       resultFolder = result;
