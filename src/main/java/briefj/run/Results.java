@@ -1,10 +1,12 @@
 package briefj.run;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
 
-import binc.Command;
 import briefj.BriefFiles;
 import briefj.BriefStrings;
 import briefj.OutputManager;
@@ -31,7 +33,10 @@ import briefj.OutputManager;
  */
 public class Results
 {
-  private static final String SPECIFIED_RESULT_FOLDER = "SPECIFIED_RESULT_FOLDER";
+  public static final String SPECIFIED_RESULT_FOLDER = "SPECIFIED_RESULT_FOLDER";
+  public static final String LATEST_STRING = "latest";
+  public static String DEFAULT_ALL_NAME = "all";
+  public static String DEFAULT_POOL_NAME = "results";
 
   /**
    * Main point of entry: this will return a directory unique
@@ -48,8 +53,7 @@ public class Results
     {
       if (resultFolder != null)
         return resultFolder;
-      resultFolder = initResultFolder();
-      return resultFolder;
+      return initResultFolder();
     }
   }
   
@@ -75,34 +79,38 @@ public class Results
   }
   
   private static File resultFolder = null;
-
+  
   private static void refreshSoftlinks(File result)
   {
     File poolFolder = result.getParentFile().getParentFile(); // up one is 'all', up two is 'results'
-    final String latestString = "latest";
-    File latestFolderSoftLink = new File(poolFolder, latestString);
-    if (latestFolderSoftLink.exists())
-      latestFolderSoftLink.delete();
     
-    try { Command.call(Command.cmd("ln").withArgs("-s").appendArg(result.getAbsolutePath()).appendArg(latestFolderSoftLink.toString())); }
-    catch (Exception e) {}
+    File latestFolderSoftLink = new File(poolFolder, LATEST_STRING);
+    latestFolderSoftLink.delete();
+    try { Files.createSymbolicLink(latestFolderSoftLink.toPath(), Paths.get(DEFAULT_POOL_NAME).relativize(result.toPath())); } 
+    catch (IOException e) {}
   }
   
   public static String nextRandomResultFolderName()
   {
     return BriefStrings.currentDataString() + "-" + BriefStrings.generateUniqueId() + ".exec";
   }
-
-  private static File initResultFolder()
+  
+  public static File initResultFolder()
   {
     // if set by an env variable, use that
     // in this case, do not refresh soft links, as the directory structure could be different
     String fromEnvironment = System.getenv().get(SPECIFIED_RESULT_FOLDER);
-    if (!StringUtils.isEmpty(fromEnvironment))
+    return initResultFolder(fromEnvironment);
+  }
+
+  public static File initResultFolder(String specified)
+  {
+    if (!StringUtils.isEmpty(specified))
     {
-      File result = new File(fromEnvironment);
+      File result = new File(specified);
       BriefFiles.createParentDirs(result);
       result.mkdir();
+      resultFolder = result;
       return result;
     }
     else
@@ -115,7 +123,7 @@ public class Results
       if (!poolFolder.isDirectory())
         throw new RuntimeException();
       
-      File allResults = new File(poolFolder, "all");
+      File allResults = new File(poolFolder, DEFAULT_ALL_NAME);
       
       allResults.mkdir();
       File result = new File(allResults, name);
@@ -124,12 +132,11 @@ public class Results
       // refresh recent softlinks
       refreshSoftlinks(result);
       
+      resultFolder = result;
       return result;
     }
   }
   
-  public static String DEFAULT_ALL_NAME = "all";
-  public static String DEFAULT_POOL_NAME = "results";
   private static File poolFolder = new File(DEFAULT_POOL_NAME);
 
   /**

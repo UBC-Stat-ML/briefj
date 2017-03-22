@@ -4,8 +4,8 @@ apply plugin: 'maven'
 
 uploadArchives {
   repositories.mavenDeployer {
-    repository(url: "file:///Users/bouchard/Documents/web/public_html/maven/")
-    pom.version = "2.4.15"
+    repository(url: "file:///${System.properties['user.home']}/artifacts/")
+    pom.version = "2.4.18"
     pom.artifactId = "briefj"
     pom.groupId = "ca.ubc.stat"
   }
@@ -28,7 +28,7 @@ repositories {
   mavenCentral()
   jcenter()
   maven {
-    url "http://www.stat.ubc.ca/~bouchard/maven/"
+    url "https://www.stat.ubc.ca/~bouchard/maven/"
   }
 }
 
