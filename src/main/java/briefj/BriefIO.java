@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -206,6 +207,17 @@ public class BriefIO
     {
       throw new RuntimeException(e);
     }
+  }
+  
+  public static void println(Writer out, String line)
+  {
+    print(out, line + "\n");
+  }
+  
+  public static void print(Writer out, String string)
+  {
+    try { out.append(string); } 
+    catch (IOException e) { throw new RuntimeException(e); }
   }
   
   public static class ReadLineIterable extends FluentIterable<String>
