@@ -5,7 +5,7 @@ apply plugin: 'maven'
 uploadArchives {
   repositories.mavenDeployer {
     repository(url: "file:///${System.properties['user.home']}/artifacts/")
-    pom.version = "2.4.20"
+    pom.version = "2.4.21"
     pom.artifactId = "briefj"
     pom.groupId = "ca.ubc.stat"
   }

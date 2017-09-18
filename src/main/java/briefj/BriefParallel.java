@@ -54,7 +54,7 @@ public class BriefParallel
           { 
             synchronized (exception)
             {
-              if (exception[0] != null)
+              if (exception[0] == null)
                 exception[0] = t; 
             }
           }
