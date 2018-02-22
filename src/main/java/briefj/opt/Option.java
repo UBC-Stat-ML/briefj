@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * From: https://github.com/percyliang/fig
- *
+ * @deprecated Use the inits framework (See github page)
  */
 @Retention(RetentionPolicy.RUNTIME)
 //@Target(ElementType.FIELD)

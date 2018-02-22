@@ -5,7 +5,7 @@ apply plugin: 'maven'
 uploadArchives {
   repositories.mavenDeployer {
     repository(url: "file:///${System.properties['user.home']}/artifacts/")
-    pom.version = "2.4.21"
+    pom.version = "2.4.22"
     pom.artifactId = "briefj"
     pom.groupId = "ca.ubc.stat"
   }
@@ -37,9 +37,8 @@ dependencies {
   testCompile group: 'junit', name: 'junit', version: '4.12'
   compile group: 'junit', name: 'junit', version: '4.12'
   compile 'net.sf.opencsv:opencsv:2.3'
-  compile group: 'ca.ubc.stat', name: 'tutorialj', version: '2.0.3'
   compile 'org.apache.commons:commons-math3:3.4.1'
-  compile group: 'ca.ubc.stat', name: 'binc', version: '1.2.1'
+  compile group: 'ca.ubc.stat', name: 'binc', version: '2.0.4'
   compile 'org.eclipse.jgit:org.eclipse.jgit:3.7.0.201502260915-r'
   compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
   compile 'com.google.code.gson:gson:2.3.1'
@@ -48,14 +47,6 @@ dependencies {
   compile 'org.slf4j:slf4j-simple:1.6.1'
 }
 
-task(tutorialj, dependsOn: ['build','testClasses'], type: JavaExec) {
-  main = 'tutorialj.Main'
-  classpath {
-    configurations.compile
-    sourceSets.main.runtimeClasspath
-    sourceSets.test.runtimeClasspath
-  }
-}
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
