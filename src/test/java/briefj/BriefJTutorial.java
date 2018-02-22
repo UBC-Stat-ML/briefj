@@ -1,6 +1,5 @@
 package briefj;
 
-import tutorialj.Tutorial;
 
 
 
@@ -57,7 +56,6 @@ public class BriefJTutorial //implements Runnable
    *   - Select the root
    *   - Deselect ``Copy projects into workspace`` to avoid having duplicates
    */
-  @Tutorial(startTutorial = "README.md", nextStep = BriefIOTutorial.class, showSource = false)
   public static void io()
   {
     
@@ -66,26 +64,22 @@ public class BriefJTutorial //implements Runnable
   /**
    * 
    */
-  @Tutorial(showSource = false, nextStep = BriefCollectionsTutorial.class)
   public static void collections() {}
   
   /**
    * 
    */
-  @Tutorial(showSource = false, nextStep = BriefStringsTutorial.class)
   public static void strings() {}
   
   
   /**
    * 
    */
-  @Tutorial(showSource = false, nextStep = ResultsTutorial.class)
   public static void results() {}
   
   
   /**
    * 
    */
-  @Tutorial(showSource = false, nextStep = BriefParallelTutorial.class)
   public static void par() {}
 }

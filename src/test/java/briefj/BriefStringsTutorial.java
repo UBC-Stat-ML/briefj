@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import tutorialj.Tutorial;
 
 import static briefj.BriefStrings.*;
 
@@ -20,7 +19,6 @@ public class BriefStringsTutorial
    * To quickly select a group from a regular expression, 
    * use 
    */
-  @Tutorial
   @Test
   public void testMatches()
   {

@@ -2,6 +2,7 @@ package briefj;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,11 +12,9 @@ import org.junit.Test;
 import briefj.collections.Counter;
 import briefj.collections.UnorderedPair;
 
-import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.Maps;
 
 
-import tutorialj.Tutorial;
 
 import static briefj.BriefMaps.*;
 
@@ -29,7 +28,6 @@ public class BriefCollectionsTutorial
    * 
    * To provide a default initial value in a map, which is also inserted if the key was missing:
    */
-  @Tutorial
   @Test
   public void getOrPut()
   {
@@ -45,11 +43,10 @@ public class BriefCollectionsTutorial
   /**
    * Pick an arbitrary elt from a collection
    */
-  @Tutorial
   @Test
   public void pick()
   {
-    Set<String> items = Sets.newLinkedHashSet();
+    Set<String> items = new LinkedHashSet<String>();
     items.add("item");
     Assert.assertEquals(BriefCollections.pick(items), "item");
   }
@@ -57,7 +54,6 @@ public class BriefCollectionsTutorial
   /**
    * Some convenience methods for hashes from doubles (Counter):
    */
-  @Tutorial
   @Test
   public void counters()
   {
@@ -98,7 +94,6 @@ public class BriefCollectionsTutorial
   /**
    * Unordered pairs:
    */
-  @Tutorial
   @Test
   public void unorderedPairs()
   {
@@ -117,7 +112,6 @@ public class BriefCollectionsTutorial
    * An indexer is just a bijection between integers 0, 1, .., N and
    * a set of objects with .equals() and .hashCode() implemented.
    */
-  @Tutorial
   @Test
   public void indexer()
   {

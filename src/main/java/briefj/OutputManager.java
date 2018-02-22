@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.io.Files;
 
 
@@ -108,7 +108,7 @@ public class OutputManager
       out.flush();
   }
   
-  private Map<String, PrintWriter> _writers = Maps.newHashMap();
+  private Map<String, PrintWriter> _writers = new LinkedHashMap<>();
   private File _resultsFolder = null;
   private final int flushInterval = 5;
   private int current = 0;

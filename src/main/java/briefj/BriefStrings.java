@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils; 
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
@@ -45,7 +44,7 @@ public class BriefStrings
   
   public static List<String> firstGroupFromAllMatches(Pattern p, String string)
   {
-    List<String> result = Lists.newArrayList();
+    List<String> result = new ArrayList<String>();
     Matcher m = p.matcher(string);
     while (m.find())
       result.add(m.group(1));

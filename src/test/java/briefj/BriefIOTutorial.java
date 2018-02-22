@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import au.com.bytecode.opencsv.CSVParser;
 
-import tutorialj.Tutorial;
 
 import static briefj.BriefIO.*;
 
@@ -28,7 +27,6 @@ public class BriefIOTutorial
    * not dumped into a large list, so file that do not fit in memory can still
    * be iterated over):
    */
-  @Tutorial
   @Test
   public void examples()
   {
@@ -46,7 +44,6 @@ public class BriefIOTutorial
    * If you want to add typed exception back (e.g., later in development),
    * just add ``.check()``:
    */
-  @Tutorial
   @Test
   public void examplesTyped() throws IOException
   {
@@ -59,7 +56,6 @@ public class BriefIOTutorial
    * (see guava project for more):
    * 
    */
-  @Tutorial
   @Test
   public void examplesFluent()
   {
@@ -70,7 +66,6 @@ public class BriefIOTutorial
   /**
    * Convenient access to CSV files:
    */
-  @Tutorial
   @Test
   public void examplesCSV()
   {
@@ -81,7 +76,6 @@ public class BriefIOTutorial
   /**
    * Which can also be indexed by the name of the columns of the first row via a map:
    */
-  @Tutorial
   @Test
   public void examplesCSVMap()
   {
@@ -92,7 +86,6 @@ public class BriefIOTutorial
   /**
    * Different CSV options can be used (see au.com.bytecode.opencsv for details):
    */
-  @Tutorial
   @Test
   public void examplesCSVCustom()
   {
@@ -103,7 +96,6 @@ public class BriefIOTutorial
   /**
    * Output without checked exception, optional charset:
    */
-  @Tutorial
   @Test
   public void examplesOutput()
   {
@@ -116,7 +108,6 @@ public class BriefIOTutorial
   /**
    * Lists files in directory, with or without suffix filter (without period)
    */
-  @Tutorial
   public void exampleLs()
   {
     for (File f : BriefFiles.ls(new File(".")))
