@@ -30,7 +30,11 @@ public class BriefParallel
       throw new RuntimeException("Number of threads cannot be negative");
     
     if (numberOfTasks == 0) return;
-    if (numberOfTasks == 1) operation.accept(0);
+    if (numberOfTasks == 1) 
+    {
+      operation.accept(0);
+      return;
+    }
     
     ContiguousSet<Integer> taskIndices = BriefLists.integers(numberOfTasks);
     
