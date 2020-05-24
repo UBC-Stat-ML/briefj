@@ -260,6 +260,7 @@ public class BriefIO
   {
     try
     {
+      BriefFiles.createParentDirs(f);
       OutputStream stream = new FileOutputStream(f);
       if (isGZip(f)) 
       {
