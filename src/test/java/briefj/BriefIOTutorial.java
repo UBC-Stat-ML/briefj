@@ -1,12 +1,14 @@
 package briefj;
 
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.bytecode.opencsv.CSVParser;
@@ -115,5 +117,18 @@ public class BriefIOTutorial
     for (File f : BriefFiles.ls(new File("."), "txt"))
       System.out.println(f);
     
+  }
+  
+  @Test
+  public void testCompression() throws IOException
+  {
+    File testFile = BriefFiles.createTempFile(".gz");
+    BufferedWriter writer = BriefIO.writer(testFile);
+    String myString = "test successful";
+    writer.write(myString);
+    writer.close();
+    
+    String read = BriefIO.fileToString(testFile);
+    Assert.assertEquals(myString, read);
   }
 }

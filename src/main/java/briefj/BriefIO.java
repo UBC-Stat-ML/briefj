@@ -1,10 +1,17 @@
 package briefj;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
@@ -18,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import au.com.bytecode.opencsv.CSVParser;
 
@@ -45,9 +54,8 @@ public class BriefIO
   }
   public static ReadLineIterable readLines(File file, Charset charset)
   {
-    return new ReadLineIterable(Files.asCharSource(file, charset));
+    return new ReadLineIterable(new FileCharSource(file, charset)); 
   }
-  
 
   public static ReadLineIterable readLinesFromURL(String url)
   {
@@ -70,7 +78,7 @@ public class BriefIO
   
   public static String fileToString(File file, Charset charset)
   {
-    return read(Files.asCharSource(file, charset));
+    return read(new FileCharSource(file, charset));
   }
   
   public static String fileToString(File file)
@@ -89,8 +97,6 @@ public class BriefIO
   }
   
   /**
-   * 
-   * 
    * Note: to make work in eclipse, add resources folder in Run config/classpath/user entry/advanced/folder
    * Actually, does not seem needed as long as resource folder properly included in the build path
    */
@@ -114,6 +120,39 @@ public class BriefIO
     }
   }
   
+  private static class FileCharSource extends CharSource
+  {
+    private final Charset charset;
+    private final File file;
+    public FileCharSource(File file, Charset charset)
+    {
+      this.charset = charset;
+      this.file = file;
+    }
+    @Override
+    public Reader openStream() throws IOException
+    {
+      if (isGZip(file))
+      {
+        InputStream fileStream = new FileInputStream(file);
+        InputStream gzipStream = new GZIPInputStream(fileStream);
+        Reader decoder = new InputStreamReader(gzipStream, charset);
+        return new BufferedReader(decoder);
+      }
+      else
+        return Files.asCharSource(file, charset).openStream();
+    }
+  }
+  
+  private static boolean isGZip(File f)
+  {
+    return isGZip(f.getName());
+  }
+  private static boolean isGZip(String str) 
+  {
+    return str.toUpperCase().endsWith("GZ");
+  }
+  
   private static class ResourceCharSource extends CharSource
   {
     private final Charset charset;
@@ -126,7 +165,15 @@ public class BriefIO
     @Override
     public Reader openStream() throws IOException
     {
-      return new BufferedReader(new InputStreamReader(new Object().getClass().getResourceAsStream(url), charset));
+      InputStream resourceStream = new Object().getClass().getResourceAsStream(url);
+      if (isGZip(url)) 
+      {
+        InputStream gzipStream = new GZIPInputStream(resourceStream);
+        Reader decoder = new InputStreamReader(gzipStream, charset);
+        return new BufferedReader(decoder);
+      }
+      else
+        return new BufferedReader(new InputStreamReader(resourceStream, charset));
     }
   }
   
@@ -142,7 +189,15 @@ public class BriefIO
     @Override
     public Reader openStream() throws IOException
     {
-      return new BufferedReader(new InputStreamReader(new URL(url).openStream(), charset));
+      InputStream urlStream = new URL(url).openStream();
+      if (isGZip(url)) 
+      {
+        InputStream gzipStream = new GZIPInputStream(urlStream);
+        Reader decoder = new InputStreamReader(gzipStream, charset);
+        return new BufferedReader(decoder);
+      }
+      else
+        return new BufferedReader(new InputStreamReader(urlStream, charset));
     }
   }
   
@@ -177,11 +232,18 @@ public class BriefIO
     };
   }
   
+  public static void stringToFile(File f, CharSequence thingsToBeWritten)
+  {
+    write(f, thingsToBeWritten);
+  }
+  
   public static void write(File f, CharSequence thingsToBeWritten)
   {
-    PrintWriter out = output(f);
+    BufferedWriter out = writer(f);
+    try {
     out.append(thingsToBeWritten);
     out.close();
+    } catch (Exception e) { throw new RuntimeException(e); }
   }
   
   public static Gson createGson()
@@ -189,11 +251,43 @@ public class BriefIO
     return new GsonBuilder().setPrettyPrinting().create();
   }
   
+  public static BufferedWriter writer(File f)
+  {
+    return writer(f, DefaultCharset.defaultCharset);
+  }
+  
+  public static BufferedWriter writer(File f, Charset charset)
+  {
+    try
+    {
+      OutputStream stream = new FileOutputStream(f);
+      if (isGZip(f)) 
+      {
+        stream = new GZIPOutputStream(stream);
+      }
+      return new BufferedWriter(
+          new OutputStreamWriter(stream, charset));
+      
+    } 
+    catch (Exception e) { throw new RuntimeException(e); }
+  }
+  
+  /**
+   * @deprecated Use writer instead
+   * @param f
+   * @return
+   */
   public static PrintWriter output(File f)
   {
     return output(f, DefaultCharset.defaultCharset);
   }
   
+  /**
+   * @deprecated Use writer instead
+   * @param f
+   * @param charset
+   * @return
+   */
   public static PrintWriter output(File f, Charset charset)
   {
     try
