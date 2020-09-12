@@ -165,7 +165,7 @@ public class BriefIO
     @Override
     public Reader openStream() throws IOException
     {
-      InputStream resourceStream = new Object().getClass().getResourceAsStream(url);
+      InputStream resourceStream = this.getClass().getResourceAsStream(url);
       if (isGZip(url)) 
       {
         InputStream gzipStream = new GZIPInputStream(resourceStream);

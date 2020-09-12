@@ -38,7 +38,7 @@ public class BriefIOTutorial
     for (String line : readLinesFromResource("/test.csv"))
       System.out.println(line);
     
-    for (String line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv"))
+    for (String line : readLinesFromURL("http://www.stat.ubc.ca/~bouchard/pub/geyser.csv"))
       System.out.println(line);
   }
   
@@ -49,7 +49,7 @@ public class BriefIOTutorial
   @Test
   public void examplesTyped() throws IOException
   {
-    for (String line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").check())
+    for (String line : readLinesFromURL("http://www.stat.ubc.ca/~bouchard/pub/geyser.csv").check())
       System.out.println(line);
   }
   
@@ -61,7 +61,7 @@ public class BriefIOTutorial
   @Test
   public void examplesFluent()
   {
-    for (String line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").skip(1).limit(10))
+    for (String line : readLinesFromURL("http://www.stat.ubc.ca/~bouchard/pub/geyser.csv").skip(1).limit(10))
       System.out.println(line);
   }
   
@@ -71,7 +71,7 @@ public class BriefIOTutorial
   @Test
   public void examplesCSV()
   {
-    for (List<String> line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").splitCSV().limit(10))
+    for (List<String> line : readLinesFromURL("http://www.stat.ubc.ca/~bouchard/pub/geyser.csv").splitCSV().limit(10))
       System.out.println(line);
   }
   
@@ -81,7 +81,7 @@ public class BriefIOTutorial
   @Test
   public void examplesCSVMap()
   {
-    for (Map<String,String> line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").indexCSV().limit(10))
+    for (Map<String,String> line : readLinesFromURL("http://www.stat.ubc.ca/~bouchard/pub/geyser.csv").indexCSV().limit(10))
       System.out.println(line);
   }
   
@@ -91,7 +91,7 @@ public class BriefIOTutorial
   @Test
   public void examplesCSVCustom()
   {
-    for (Map<String,String> line : readLinesFromURL("http://stat.ubc.ca/~bouchard/pub/geyser.csv").indexCSV(new CSVParser(';')).limit(10))
+    for (Map<String,String> line : readLinesFromURL("http://www.stat.ubc.ca/~bouchard/pub/geyser.csv").indexCSV(new CSVParser(';')).limit(10))
       System.out.println(line);
   }
   
