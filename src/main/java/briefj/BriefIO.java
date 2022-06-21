@@ -66,14 +66,35 @@ public class BriefIO
     return new ReadLineIterable(new URLCharSource(url, charset));
   }
   
+  /**
+   * @deprecated Use resourceToString(String resource, Charset charset, Class<?> classForResource)
+   * @param resource
+   * @param charset
+   * @return
+   */
   public static String resourceToString(String resource, Charset charset)
   {
-    return read(new ResourceCharSource(resource, charset));
+    return resourceToString(resource, charset, null);
   }
   
+  public static String resourceToString(String resource, Charset charset, Class<?> classForResource)
+  {
+    return read(new ResourceCharSource(resource, charset, classForResource));
+  }
+  
+  /**
+   * @deprecated Use resourceToString(String resource, Class<?> classForResource)
+   * @param resource
+   * @return
+   */
   public static String resourceToString(String resource)
   {
     return resourceToString(resource, DefaultCharset.defaultCharset);
+  }
+  
+  public static String resourceToString(String resource, Class<?> classForResource)
+  {
+    return resourceToString(resource, DefaultCharset.defaultCharset, classForResource);
   }
   
   public static String fileToString(File file, Charset charset)
@@ -97,16 +118,45 @@ public class BriefIO
   }
   
   /**
-   * Note: to make work in eclipse, add resources folder in Run config/classpath/user entry/advanced/folder
-   * Actually, does not seem needed as long as resource folder properly included in the build path
+   * @deprecated Use readLinesFromResource(String resource, Class<?> classForResource)
+   * @param resource
+   * @return
    */
   public static ReadLineIterable readLinesFromResource(String resource)
   {
-    return readLinesFromResource(resource, DefaultCharset.defaultCharset);
+    return readLinesFromResource(resource, DefaultCharset.defaultCharset, null);
   }
+  /**
+   * 
+   * @param resource
+   * @param classForResource A class preferably in the same jar as the resource you are looking for
+   * @return
+   */
+  public static ReadLineIterable readLinesFromResource(String resource, Class<?> classForResource)
+  {
+    return readLinesFromResource(resource, DefaultCharset.defaultCharset, classForResource);
+  }
+  
+  /**
+   * @deprecated Use readLinesFromResource(String resource, Charset charset, Class<?> classForResource)
+   * @param resource
+   * @return
+   */
   public static ReadLineIterable readLinesFromResource(String resource, Charset charset)
   {
-    return new ReadLineIterable(new ResourceCharSource(resource, charset));
+    return readLinesFromResource(resource, charset, null);
+  }
+  
+  /**
+   * 
+   * @param resource
+   * @param charset
+   * @param classForResource A class preferably in the same jar as the resource you are looking for
+   * @return
+   */
+  public static ReadLineIterable readLinesFromResource(String resource, Charset charset, Class<?> classForResource)
+  {
+    return new ReadLineIterable(new ResourceCharSource(resource, charset, classForResource));
   }
   
   public static String read(CharSource charSource)
@@ -157,15 +207,17 @@ public class BriefIO
   {
     private final Charset charset;
     private final String url;
-    public ResourceCharSource(String url, Charset charset)
+    private final Class<?> classForResource;
+    public ResourceCharSource(String url, Charset charset, Class<?> c)
     {
       this.charset = charset;
       this.url = url;
+      this.classForResource = c == null ? ResourceCharSource.class : c;
     }
     @Override
     public Reader openStream() throws IOException
     {
-      InputStream resourceStream = this.getClass().getResourceAsStream(url);
+      InputStream resourceStream = classForResource.getResourceAsStream(url);
       if (isGZip(url)) 
       {
         InputStream gzipStream = new GZIPInputStream(resourceStream);
